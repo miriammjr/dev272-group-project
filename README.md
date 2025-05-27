@@ -1,50 +1,33 @@
-# Welcome to your Expo app 👋
+# dev272groupproject
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## week 1 stuff to do:
 
-## Get started
+### GitHub Repository & Project Board Setup
+- [x] GitHub Repo
+- [x] React Native + Expo app
+- [] ESLint and Prettier enabled
+- [] package.json updated with project name
+- [] package.json updated with description of app idea
+- [] main branch (protected for final deliverables)
+- [] development branch (for weekly progress)
+- [] /restrospectives directory for future use
+- [] /wireframes directory
+- [] github project created
+- [] milestone 1 tasks added to github project
+- [] team members assigned to tasks
+- [] tasks linked to issues where applicable
 
-1. Install dependencies
+### Software Development Plan & Wireframes
+- [] SOFTWARE_DEVELOPMENT_PLAN.md in the root of the repo
+- [] /wireframes folder
+- [] app screen wireframes
+- [] user flow diagrams
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+  In the .md file:
+  - [] team member names + assigned roles
+  - [] problem the app will solve
+  - [] target users and user personas
+  - [] mvp feature list
+  - [] planned tech stack and third-party libraries
+  - [] sprint plan or timeline overview
+  
