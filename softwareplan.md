@@ -99,6 +99,9 @@ Supabase
 # Version Control Workflow
 
 Main branch: stable releases https://github.com/miriammjr/dev272-group-project/tree/main
+
 Dev branch: https://github.com/miriammjr/dev272-group-project/tree/development
+
 Branches for different features/weeks?
+
 Currently on https://github.com/miriammjr/dev272-group-project/tree/week1
