@@ -11,9 +11,13 @@ Members: Emil Flores, Jonathan Mutombo, Miriam Rundell, Milton Vuong
 # Roles:
 
 Project manager: Miriam Rundell (primary), Jonathan Mutombo (secondary)
+
 Frontend: Jonathan Mutombo (primary), Miriam Rundell (secondary)
+
 Backend: Milton Vuong (primary), Miriam Rundell (secondary)
+
 QA: Emil Flores (primary), Jonathan Mutombo (secondary)
+
 UI: Emil Flores (primary), Milton Vuong (secondary)
 
 # Week-By-Week Plan
