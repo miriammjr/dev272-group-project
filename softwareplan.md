@@ -1,8 +1,11 @@
 # Project:
 
 Name: UNDECIDED
+
 Platform: React Native with Expo
+
 Timeline: 6 weeks
+
 Members: Emil Flores, Jonathan Mutombo, Miriam Rundell, Milton Vuong
 
 # Roles:
