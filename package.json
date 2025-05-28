@@ -1,5 +1,6 @@
 {
   "name": "dev272-group-project",
+  "description": "Undecided, putting this here just to fill assignment requirements.",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
