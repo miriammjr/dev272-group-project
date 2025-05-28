@@ -267,11 +267,11 @@ Version Control Workflow [REQUIRED]
 
 Main Branch: Stable releases
 
-[linkto](githublink)
+[[linkto](githublink)](https://github.com/miriammjr/dev272-group-project)
 
 Dev Branch: Ongoing development
 
-[linkto](githublink)
+[[linkto](githublink)](https://github.com/miriammjr/dev272-group-project/tree/development)
 
 Feature Branches: One per task/feature
 
