@@ -69,7 +69,7 @@ Notifications, ability to track when things are used up (or predict)
 
 Supabase?
 
-Option 2: music practice tracking system
+## Option 2: music practice tracking system
 Navigation: tab system
 Screens: Music piece list, practice tracker, planner, click on piece to access different sections of music and notes
 Forms: piece in general (composer, etc), notes (sections of music [i.e., measure numbers]), practice addition
