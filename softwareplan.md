@@ -53,15 +53,22 @@ Create presentation
 ## Option 1: essentials tracking system
 
 Navigation: tab system
+
 Screens: Chore list, food list, cleaning supplies, calendar
+
 Forms: food, cleaning supplies
+
 Data storage: anything currently used is stored locally, anything else stored remotely.
+
 (every new bottle of something stored in a new row in the table? unsure)
+
 Data fetching: only for searching names of previously used things. don't think it's necessary for much else
+
 
 ### Problem that will be solved
 
 For people with memory problems or other executive functioning issues, remembering to do chores or to buy new supplies or food when needed is difficult.
+
 This app will help keep track of all of that.
 
 ### Target Users
@@ -77,16 +84,23 @@ Notifications, ability to track when things are used up (or predict)
 Supabase?
 
 ## Option 2: music practice tracking system
+
 Navigation: tab system
+
 Screens: Music piece list, practice tracker, planner, click on piece to access different sections of music and notes
+
 Forms: piece in general (composer, etc), notes (sections of music [i.e., measure numbers]), practice addition
+
 Perhaps some sort of (tiny) algorithm to be able to make goals for deadlines (i.e. lessons, rehearsals, performances)
+
 Data storage: current pieces remotely, past should be stored remotely
+
 Data fetching: when necessary, fetch data from past pieces.
 
 ### Problem that will be solved
 
 While classical musicians need to keep track of their music practicing, there aren't many tech solutions for that and most use paper and pen.
+
 It would be nice to have it on their phones.
 
 ### Target Users
