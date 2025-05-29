@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="85c92371-7107-4836-89ef-7a2e43f6ed61" name="Changes" comment="Forecast Screen Update">
-      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/supabase.ts" afterDir="false" />
+    <list default="true" id="85c92371-7107-4836-89ef-7a2e43f6ed61" name="Changes" comment="Linked forecast screen to db instead of local data.">
+      <change afterPath="$PROJECT_DIR$/contexts/AuthContext.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/forecast.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/forecast.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,11 +79,20 @@
       <option name="project" value="LOCAL" />
       <updated>1748540463391</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Linked forecast screen to db instead of local data.">
+      <option name="closed" value="true" />
+      <created>1748542641993</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1748542641993</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Forecast Screen Update" />
-    <option name="LAST_COMMIT_MESSAGE" value="Forecast Screen Update" />
+    <MESSAGE value="Linked forecast screen to db instead of local data." />
+    <option name="LAST_COMMIT_MESSAGE" value="Linked forecast screen to db instead of local data." />
   </component>
 </project>
