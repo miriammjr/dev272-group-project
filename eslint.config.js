@@ -1,25 +1,25 @@
 // https://docs.expo.dev/guides/using-eslint/
-const { defineConfig } = require("eslint/config");
-const expoConfig = require("eslint-config-expo/flat");
-const prettier = require("eslint-plugin-prettier");
+const { defineConfig } = require('eslint/config');
+const expoConfig = require('eslint-config-expo/flat');
+const prettier = require('eslint-plugin-prettier');
 
 module.exports = defineConfig([
   expoConfig,
   {
-    ignores: ["dist/*"],
+    ignores: ['dist/*'],
   },
   {
-    files: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
+    files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx'],
     languageOptions: {
       ecmaVersion: 2021,
-      sourceType: "module",
+      sourceType: 'module',
     },
     plugins: {
       prettier,
     },
     rules: {
-      "prettier/prettier": "error",
-      semi: ["warn", "always"],
+      'prettier/prettier': 'error',
+      semi: ['warn', 'always'],
     },
   },
 ]);

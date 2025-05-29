@@ -64,7 +64,6 @@ Data storage: anything currently used is stored locally, anything else stored re
 
 Data fetching: only for searching names of previously used things. don't think it's necessary for much else
 
-
 ### Problem that will be solved
 
 For people with memory problems or other executive functioning issues, remembering to do chores or to buy new supplies or food when needed is difficult.
