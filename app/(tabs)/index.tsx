@@ -28,6 +28,7 @@ export default function HomeScreen() {
           <ThemedText type='defaultSemiBold'>app/(tabs)/index.tsx</ThemedText>{' '}
           to see changes. Press{' '}
           <ThemedText type='defaultSemiBold'>
+
             {Platform.select({
               ios: 'cmd + d',
               android: 'cmd + m',
@@ -47,6 +48,7 @@ export default function HomeScreen() {
         <ThemedText type='subtitle'>Step 3: Get a fresh start</ThemedText>
         <ThemedText>
           {`When you're ready, run `}
+
           <ThemedText type='defaultSemiBold'>
             npm run reset-project
           </ThemedText>{' '}
@@ -54,6 +56,7 @@ export default function HomeScreen() {
           directory. This will move the current{' '}
           <ThemedText type='defaultSemiBold'>app</ThemedText> to{' '}
           <ThemedText type='defaultSemiBold'>app-example</ThemedText>.
+
         </ThemedText>
       </ThemedView>
     </ParallaxScrollView>
