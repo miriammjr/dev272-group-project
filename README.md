@@ -6,10 +6,12 @@
 
 - [x] GitHub Repo
 - [x] React Native + Expo app
+
 - [ish] ESLint and Prettier enabled
 - [ish] package.json updated with project name
 - [ish] package.json updated with description of app idea
 - [x] main branch (protected for final deliverables)
+
 - [x] development branch (for weekly progress)
 - [x] /restrospectives directory for future use
 - [x] /wireframes directory
@@ -19,6 +21,7 @@
 - [x] tasks linked to issues where applicable
 
 ### Software Development Plan & Wireframes
+
 
 - [ish] SOFTWARE_DEVELOPMENT_PLAN.md in the root of the repo
 - [x] /wireframes folder
@@ -33,3 +36,4 @@
   - [ish] mvp feature list
   - [ish] planned tech stack and third-party libraries
   - [ish] sprint plan or timeline overview
+
