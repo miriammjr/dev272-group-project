@@ -82,7 +82,11 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name='house.fill' color={color} />
+
+            <IconSymbol size={28} name="house.fill" color={color} />
+
+            
+
           ),
         }}
       />
@@ -91,7 +95,11 @@ export default function TabLayout() {
         options={{
           title: 'Manage',
           tabBarIcon: ({ color }) => (
+
             <IconSymbol size={28} name='square.and.pencil' color={color} />
+
+
+            <IconSymbol size={28} name="paperplane.fill" color={color} />
           ),
         }}
       />
@@ -110,6 +118,14 @@ export default function TabLayout() {
           title: 'Calendar',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name='calendar' color={color} />
+                    name="forecast"
+        options={{
+          title: 'Forecast',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="calendar.fill" color={color} />
+
+
+
           ),
         }}
       />
