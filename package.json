@@ -1,6 +1,5 @@
 {
   "name": "dev272-group-project",
-  "description": "Undecided, putting this here just to fill assignment requirements.",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
@@ -9,17 +8,14 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "format": "prettier --write .",
-    "check-format": "prettier --check ."
-
+    "lint": "expo lint",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
-    "@supabase/supabase-js": "^2.49.8",
     "expo": "~53.0.9",
     "expo-blur": "~14.1.4",
     "expo-constants": "~17.1.6",
@@ -45,18 +41,21 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@eslint/js": "^9.27.0",
     "@types/react": "~19.0.10",
     "eslint": "^9.27.0",
     "eslint-config-expo": "~9.2.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",
-    "eslint-plugin-react": "^7.37.5",
-    "globals": "^16.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.0",
     "prettier": "^3.5.3",
-    "typescript": "~5.8.3",
-    "typescript-eslint": "^8.33.0"
-
+    "typescript": "~5.8.3"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "private": true
 }
