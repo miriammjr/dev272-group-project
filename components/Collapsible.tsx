@@ -19,6 +19,7 @@ export function Collapsible({
       <TouchableOpacity
         style={styles.heading}
         onPress={() => setIsOpen(value => !value)}
+
         activeOpacity={0.8}
       >
         <IconSymbol
