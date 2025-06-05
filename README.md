@@ -1,39 +1,17 @@
-# dev272groupproject
+### Week 2
 
-## week 1 stuff to do:
+- Supplies and chores can be added.
+- Calendar and settings page are visible.
 
-### GitHub Repository & Project Board Setup
+  
+To run, these installations need to occur:   
 
-- [x] GitHub Repo
-- [x] React Native + Expo app
+npm i  @react-native-async-storage/async-storage  
 
-- [ish] ESLint and Prettier enabled
-- [ish] package.json updated with project name
-- [ish] package.json updated with description of app idea
-- [x] main branch (protected for final deliverables)
+npm i expo-notifications  
 
-- [x] development branch (for weekly progress)
-- [x] /restrospectives directory for future use
-- [x] /wireframes directory
-- [x] github project created
-- [x] milestone 1 tasks added to github project
-- [x] team members assigned to tasks
-- [x] tasks linked to issues where applicable
+npm i react-native-calendars  
 
-### Software Development Plan & Wireframes
+npm i @react-native-community/datetimepicker  
 
-
-- [ish] SOFTWARE_DEVELOPMENT_PLAN.md in the root of the repo
-- [x] /wireframes folder
-- [x] app screen wireframes
-- [x] user flow diagrams
-
-  In the .md file:
-
-  - [x] team member names + assigned roles
-  - [ish] problem the app will solve
-  - [ish] target users and user personas
-  - [ish] mvp feature list
-  - [ish] planned tech stack and third-party libraries
-  - [ish] sprint plan or timeline overview
-
+I am having trouble merging the week 1 branch into this branch; will try to resolve it. 
