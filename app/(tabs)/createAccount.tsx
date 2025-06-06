@@ -10,9 +10,12 @@ export default function Auth() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  async function signin() {
+  async function signup() {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signUp({
       email: email,
       password: password,
     });
@@ -20,14 +23,14 @@ export default function Auth() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Log in</Text>
+      <Text style={styles.text}>Create Account</Text>
       <Formik
         initialValues={{
           email: '',
           password: '',
         }}
         onSubmit={() => {
-          signin();
+          signup();
           console.log(email);
         }}
       >
@@ -58,12 +61,12 @@ export default function Auth() {
             {errors.password && touched.password && (
               <Text>{errors.password}</Text>
             )}
-            <Button title='Sign In' onPress={() => handleSubmit()} />
+            <Button title='Sign Up' onPress={() => handleSubmit()} />
           </ThemedView>
         )}
       </Formik>
-      <Link href='/createAccount' style={styles.link}>
-        Create a new account
+      <Link href='/index' style={styles.link}>
+        Sign in
       </Link>
     </View>
   );
