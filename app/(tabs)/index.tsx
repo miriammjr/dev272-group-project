@@ -16,6 +16,7 @@ export default function Auth() {
       email: email,
       password: password,
     });
+    console.log();
   }
 
   return (
@@ -28,7 +29,6 @@ export default function Auth() {
         }}
         onSubmit={() => {
           signin();
-          console.log(email);
         }}
       >
         {({
