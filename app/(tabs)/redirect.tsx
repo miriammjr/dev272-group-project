@@ -1,19 +1,26 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+// import 'react-native-url-polyfill/auto';
+import { User } from '@supabase/supabase-js';
+import { Alert, Text, View } from 'react-native';
+import { supabase } from '../../lib/supabase';
 
-const redirect = () => {
+export default function App() {
+  const [user, setUser] = useState<User | null>(null);
+  console.log('IN THE REDIRECT');
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setUser(user);
+        console.log(user);
+      } else {
+        Alert.alert('bad error');
+        console.log("whoops something's gone horribly wrong");
+      }
+    });
+  }, []);
   return (
-    <View style={styles.container}>
-      <Text>redirect</Text>
+    <View>
+      <Text>Testing user login stuff</Text>
     </View>
   );
-};
-
-export default redirect;
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
-    height: '100%',
-  },
-});
+}
