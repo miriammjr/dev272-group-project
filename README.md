@@ -22,7 +22,6 @@
 
 ### Software Development Plan & Wireframes
 
-
 - [ish] SOFTWARE_DEVELOPMENT_PLAN.md in the root of the repo
 - [x] /wireframes folder
 - [x] app screen wireframes
@@ -36,4 +35,3 @@
   - [ish] mvp feature list
   - [ish] planned tech stack and third-party libraries
   - [ish] sprint plan or timeline overview
-

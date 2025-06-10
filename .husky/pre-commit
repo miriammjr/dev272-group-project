@@ -1,8 +1,4 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
 
-# Run Expo lint
-expo lint
-
-# Run Prettier check
-npx prettier --write .
+npx lint-staged
