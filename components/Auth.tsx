@@ -42,6 +42,7 @@ export default function Auth() {
     setLoading(true);
     const { data, error } = await supabase.auth.resetPasswordForEmail(email);
     console.log(`resetting password for ${email}`);
+    Alert.alert('Check your email to reset your password!');
   }
 
   return (
