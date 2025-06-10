@@ -17,7 +17,7 @@ export default function App() {
   return (
     <View>
       {' '}
-      <Auth /> {!!session && !!session.user && <Text>{session.user.id}</Text>}
+      <Auth /> {session && session.user && <Text>{session.user.id}</Text>}
     </View>
   );
 }
