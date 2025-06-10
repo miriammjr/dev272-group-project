@@ -1,11 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const TaskCard = ({ taskName, timeRemaining }) => {
+const TaskCard = ({ taskName, repeatIn }) => {
   return (
     <View style={styles.card}>
       <Text style={styles.taskName}>{taskName}</Text>
-      <Text style={styles.timeRemaining}>Repeat in: {timeRemaining}</Text>
+      {repeatIn !== null && repeatIn !== undefined ? (
+        <Text style={styles.timeRemaining}>
+          Task Frequency: every {repeatIn} day{repeatIn === 1 ? '' : 's'}
+        </Text>
+      ) : (
+        <Text style={styles.timeRemaining}>No repeat scheduled</Text>
+      )}
     </View>
   );
 };

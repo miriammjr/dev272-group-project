@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React from 'react';
 import { Image } from 'expo-image';
 import { StyleSheet } from 'react-native';
 
@@ -6,23 +6,15 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import TaskCard from '@/components/TaskCard';
-import { supabase } from '../../utils/supabase';
+
+import { useTasks } from '@/hooks/useTasks';
 
 export default function ForecastScreen() {
-  const [tasks, setTasks] = useState([]);
+  const { tasks, loading, error } = useTasks();
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      const { data, error } = await supabase.from('TaskList').select('*');
-      if (error) {
-        console.error('Error fetching tasks:', error);
-      } else {
-        setTasks(data);
-      }
-    };
-
-    fetchTasks();
-  }, []);
+  const repeatingTasks = tasks.filter(
+    (task) => task.repeatIn !== null && task.repeatIn !== undefined,
+  );
 
   return (
     <ParallaxScrollView
@@ -34,15 +26,23 @@ export default function ForecastScreen() {
         />
       }
     >
-      <ThemedView style={styles.titleContainer}>
+      <ThemedView style={styles.headerRow}>
         <ThemedText type="title">Forecast</ThemedText>
       </ThemedView>
+
       <ThemedView style={styles.stepContainer}>
-        {tasks.map((task) => (
+        {loading && <ThemedText>Loading...</ThemedText>}
+        {error && <ThemedText type="error">{error}</ThemedText>}
+        {!loading && repeatingTasks.length === 0 && (
+          <ThemedText>No repeating tasks found.</ThemedText>
+        )}
+
+        {repeatingTasks.map((task) => (
           <TaskCard
             key={task.id}
             taskName={task.taskName}
-            timeRemaining={task.repeatIn}
+            dueDate={task.dueDate}
+            repeatIn={task.repeatIn}
           />
         ))}
       </ThemedView>
@@ -51,15 +51,17 @@ export default function ForecastScreen() {
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  headerRow: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 8,
     marginBottom: 16,
+    paddingHorizontal: 16,
   },
   stepContainer: {
     gap: 8,
     marginBottom: 8,
+    paddingHorizontal: 16,
   },
   reactLogo: {
     height: 178,

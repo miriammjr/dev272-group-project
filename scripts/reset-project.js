@@ -45,7 +45,7 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-const moveDirectories = async userInput => {
+const moveDirectories = async (userInput) => {
   try {
     if (userInput === 'y') {
       // Create the app-example directory
