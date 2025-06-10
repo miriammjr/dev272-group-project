@@ -1,8 +1,7 @@
 import { Button, Input } from '@rneui/themed';
-import { Redirect } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,7 +17,6 @@ export default function Auth() {
     setLoading(false);
     if (!error) {
       console.log('LOGGED IN');
-      return <Redirect href='/(tabs)/redirect' />;
     } else {
       Alert.alert('Login failed.');
       console.log(error);
@@ -43,6 +41,7 @@ export default function Auth() {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email);
     console.log(`resetting password for ${email}`);
     Alert.alert('Check your email to reset your password!');
+    setLoading(false);
   }
 
   return (

@@ -1,12 +1,19 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 const redirect = () => {
   return (
-    <View>
-      <Text>REDIRECTION HAS WORKED</Text>
+    <View style={styles.container}>
+      <Text>redirect</Text>
     </View>
   );
 };
 
 export default redirect;
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: 'white',
+    height: '100%',
+  },
+});
