@@ -1,4 +1,5 @@
 import { Button, Input } from '@rneui/themed';
+import { Redirect } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { supabase } from '../lib/supabase';
@@ -15,7 +16,13 @@ export default function Auth() {
     });
     if (error) Alert.alert(error.message);
     setLoading(false);
-    console.log('LOGGED IN');
+    if (!error) {
+      console.log('LOGGED IN');
+      return <Redirect href='/(tabs)/redirect' />;
+    } else {
+      Alert.alert('Login failed.');
+      console.log(error);
+    }
   }
 
   async function signUpWithEmail() {
@@ -29,6 +36,12 @@ export default function Auth() {
     if (!session)
       Alert.alert('Please check your inbox for email verification!');
     setLoading(false);
+  }
+
+  async function forgotPassword() {
+    setLoading(true);
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+    console.log(`resetting password for ${email}`);
   }
 
   return (
@@ -72,6 +85,14 @@ export default function Auth() {
             onPress={() => signUpWithEmail()}
           />{' '}
         </View>{' '}
+        <View style={styles.button}>
+          {' '}
+          <Button
+            title='Reset Password'
+            disabled={loading}
+            onPress={() => forgotPassword()}
+          />
+        </View>
       </View>
     </View>
   );
