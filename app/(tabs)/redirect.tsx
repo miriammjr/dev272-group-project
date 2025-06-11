@@ -7,7 +7,7 @@ import { supabase } from '../../lib/supabase';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
-  console.log('IN THE REDIRECT');
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user) {

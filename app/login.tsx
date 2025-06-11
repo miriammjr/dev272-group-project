@@ -11,7 +11,7 @@ export default function App() {
       // setSession(session);
       if (session) {
         console.log('apparently im logged in');
-        router.replace('/(tabs)/redirect');
+        router.replace('/(tabs)/home');
       }
     });
 
@@ -19,7 +19,7 @@ export default function App() {
       // setSession(session);
       if (session) {
         console.log('logging in');
-        router.replace('/(tabs)/redirect');
+        router.replace('/(tabs)/home');
       } else {
         console.log('LOGGED OUT');
         router.replace('/Auth');

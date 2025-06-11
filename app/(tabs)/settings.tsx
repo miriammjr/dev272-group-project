@@ -1,5 +1,7 @@
+import { supabase } from '@/lib/supabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
@@ -68,6 +70,17 @@ export default function SettingsScreen() {
     ]);
   };
 
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      Alert.alert('Error');
+      console.log(error);
+    } else {
+      console.log('LOGGED OUT');
+      router.replace('/../Auth');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>⚙️ Settings</Text>
@@ -118,6 +131,10 @@ export default function SettingsScreen() {
           color='#FF3B30'
           onPress={resetAllData}
         />
+      </View>
+
+      <View>
+        <Button title='Log Out' onPress={() => logout()} />
       </View>
     </View>
   );

@@ -18,7 +18,7 @@ export default function Auth() {
     setLoading(false);
     if (!error) {
       console.log('LOGGED IN');
-      router.replace('/(tabs)/redirect');
+      router.replace('/(tabs)/home');
     } else {
       Alert.alert('Login failed.');
       console.log(error);

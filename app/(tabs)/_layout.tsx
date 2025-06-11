@@ -135,13 +135,13 @@ export default function TabLayout() {
           ),
         }}
       /> */}
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name='redirect'
         options={{
           title: 'Redirect',
           headerShown: false,
         }}
-      />
+      /> */}
     </Tabs>
   );
 }
