@@ -14,11 +14,12 @@ import {
   View,
 } from 'react-native';
 
-//  Defining the item structure
 type TaskItem = {
   id: string;
   name: string;
   frequency: number;
+  createdAt: number;
+  lastCompletedAt?: number | null;
 };
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -79,6 +80,8 @@ const TaskSupplyManagementScreen = () => {
         id: generateId(),
         name: itemName,
         frequency,
+        createdAt: Date.now(),
+        lastCompletedAt: null,
       };
       setChores(prev => [...prev, newChore]);
     } else if (modalType === 'editChore' && currentItem) {
@@ -94,6 +97,8 @@ const TaskSupplyManagementScreen = () => {
         id: generateId(),
         name: itemName,
         frequency,
+        createdAt: Date.now(),
+        lastCompletedAt: null,
       };
       setSupplies(prev => [...prev, newSupply]);
     } else if (modalType === 'editSupply' && currentItem) {
@@ -247,103 +252,56 @@ const TaskSupplyManagementScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: '#f4f4f8',
-  },
+  container: { flex: 1, backgroundColor: '#F5F5F5' },
   sectionContainer: {
-    marginBottom: 20,
+    margin: 16,
     backgroundColor: '#fff',
     borderRadius: 8,
-    padding: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
+    padding: 12,
+    elevation: 1,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15,
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-  },
+  sectionTitle: { fontSize: 20, fontWeight: 'bold' },
+  emptyListText: { color: '#888', paddingVertical: 12 },
   itemContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    paddingVertical: 8,
   },
-  itemTextContainer: {
-    flex: 1,
-  },
-  itemName: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  itemFrequency: {
-    fontSize: 14,
-    color: 'gray',
-    marginTop: 4,
-  },
-  itemActions: {
-    flexDirection: 'row',
-  },
-  actionButton: {
-    marginLeft: 15,
-    padding: 5,
-  },
-  emptyListText: {
-    textAlign: 'center',
-    color: 'gray',
-    marginTop: 10,
-    marginBottom: 10,
-  },
+  itemTextContainer: {},
+  itemName: { fontSize: 16, fontWeight: 'bold' },
+  itemFrequency: { color: '#666' },
+  itemActions: { flexDirection: 'row' },
+  actionButton: { marginHorizontal: 4 },
   modalOverlay: {
     flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.35)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    width: '90%',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'stretch',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 24,
+    width: '85%',
   },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
+  modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 12 },
   input: {
-    height: 45,
-    borderColor: 'lightgray',
-    borderWidth: 1,
-    marginBottom: 15,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    backgroundColor: '#f9f9f9',
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    marginBottom: 18,
+    padding: 6,
+    fontSize: 16,
   },
   modalButtons: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 10,
+    justifyContent: 'space-between',
+    marginTop: 8,
   },
 });
 
