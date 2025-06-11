@@ -2,7 +2,7 @@ import { Button, Input } from '@rneui/themed';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../lib/supabase';
 export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,9 +40,11 @@ export default function Auth() {
 
   async function forgotPassword() {
     setLoading(true);
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email);
-    console.log(`resetting password for ${email}`);
-    Alert.alert('Check your email to reset your password!');
+    // const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+    // console.log(`resetting password for ${email}`);
+    // Alert.alert('Check your email to reset your password!');
+    // setLoading(false);
+    Alert.alert("This doesn't work yet; make a new account.");
     setLoading(false);
   }
 
