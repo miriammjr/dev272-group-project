@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -115,9 +116,17 @@ export default function HomeScreen() {
 
   return (
     <ScrollView style={styles.container}>
+      {/* Settings Icon in the top right */}
+      <TouchableOpacity
+        style={styles.settingsIcon}
+        onPress={() => router.push('/settings')}
+        accessibilityLabel='Settings'
+      >
+        <Ionicons name='settings-outline' size={28} color='#444' />
+      </TouchableOpacity>
       <Text style={styles.heading}>🏡 Resupply</Text>
       <Text style={styles.subheading}>
-        This isnpx what you need to handle today:
+        This is what you need to handle today:
       </Text>
 
       <Text style={styles.sectionTitle}>🛠 Tasks Due</Text>
@@ -151,17 +160,14 @@ export default function HomeScreen() {
 
       <View style={styles.navButtons}>
         <NavButton
-          label='🧹 Manage Tasks'
-          onPress={() => router.push('/(tabs)/management')}
+          label='🧹 Daily To Do'
+          onPress={() => router.push('/daily-todo')}
         />
         <NavButton
           label='📅 Forecast'
           onPress={() => router.push('/(tabs)/forecast')}
         />
-        <NavButton
-          label='🛒 Shop'
-          onPress={() => router.push('/(tabs)/shop')}
-        />
+        <NavButton label='🛒 Shop' onPress={() => router.push('/shop')} />
       </View>
     </ScrollView>
   );
@@ -239,5 +245,16 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 18,
+  },
+  settingsIcon: {
+    position: 'absolute',
+    top: 18,
+    // left: 22,
+    right: 22,
+    zIndex: 10,
+    padding: 6,
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    elevation: 2,
   },
 });
