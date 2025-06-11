@@ -92,8 +92,11 @@ export default function TabLayout() {
           title: 'Manage',
           tabBarIcon: ({ color }) => (
             <>
+              <>
+                <IconSymbol size={28} name='square.and.pencil' color={color} />
+                <IconSymbol size={28} name='paperplane.fill' color={color} />
+              </>
               <IconSymbol size={28} name='square.and.pencil' color={color} />
-              <IconSymbol size={28} name='paperplane.fill' color={color} />
             </>
           ),
         }}
@@ -107,6 +110,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
       {/* <Tabs.Screen
         name='calendar'
         options={{
@@ -119,6 +123,14 @@ export default function TabLayout() {
             <IconSymbol size={28} name="calendar.fill" color={color} />
 
 
+
+
+      <Tabs.Screen
+        name='calendar'
+        options={{
+          title: 'Calendar',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name='calendar' color={color} />
 
           ),
         }}
