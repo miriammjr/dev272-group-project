@@ -27,7 +27,7 @@ export default function App() {
       console.log(error);
     } else {
       console.log('LOGGED OUT');
-      router.replace('/(auth)/Auth');
+      router.replace('/../Auth');
     }
   };
 

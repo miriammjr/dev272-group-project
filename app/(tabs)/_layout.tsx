@@ -127,6 +127,7 @@ export default function TabLayout() {
         name='redirect'
         options={{
           title: 'Redirect',
+          headerShown: false,
         }}
       />
     </Tabs>
