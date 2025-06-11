@@ -11,6 +11,7 @@ export default function App() {
       // setSession(session);
       if (session) {
         console.log('apparently im logged in');
+        router.replace('/(tabs)/redirect');
       }
     });
 
