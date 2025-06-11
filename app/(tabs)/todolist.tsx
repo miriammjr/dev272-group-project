@@ -70,7 +70,7 @@ export default function TodoList() {
 
     const todayStart = startOfToday();
 
-    tasks.forEach((task) => {
+    tasks.forEach(task => {
       const due = parseISO(task.dueDate);
 
       if (task.completed) {
@@ -99,11 +99,11 @@ export default function TodoList() {
 
   const renderSection = (title: string, tasks: Task[]) => (
     <View style={styles.section}>
-      <ThemedText type="subtitle">{title}</ThemedText>
+      <ThemedText type='subtitle'>{title}</ThemedText>
       {tasks.length === 0 ? (
         <Text style={styles.emptyText}>No tasks</Text>
       ) : (
-        tasks.map((task) => (
+        tasks.map(task => (
           <TaskCardToggle
             key={task.id}
             task={task}
@@ -126,7 +126,7 @@ export default function TodoList() {
       }
     >
       <ThemedView style={styles.headerRow}>
-        <ThemedText type="title">To-Do List</ThemedText>
+        <ThemedText type='title'>To-Do List</ThemedText>
         <TouchableOpacity
           style={styles.addButtonTop}
           onPress={() => setModalVisible(true)}
@@ -144,28 +144,28 @@ export default function TodoList() {
         {renderSection('Completed', completed)}
       </ThemedView>
 
-      <Modal visible={modalVisible} animationType="slide" transparent>
+      <Modal visible={modalVisible} animationType='slide' transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Add New Task</Text>
 
             <TextInput
               style={styles.input}
-              placeholder="Task Name"
+              placeholder='Task Name'
               value={taskName}
               onChangeText={setTaskName}
             />
 
             <TextInput
               style={styles.input}
-              placeholder="Due Date (YYYY-MM-DD)"
+              placeholder='Due Date (YYYY-MM-DD)'
               value={dueDate}
               onChangeText={setDueDate}
             />
 
             <View style={styles.modalButtons}>
-              <Button title="Cancel" onPress={() => setModalVisible(false)} />
-              <Button title="Add Task" onPress={handleAddTask} />
+              <Button title='Cancel' onPress={() => setModalVisible(false)} />
+              <Button title='Add Task' onPress={handleAddTask} />
             </View>
           </View>
         </View>

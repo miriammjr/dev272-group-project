@@ -6,32 +6,32 @@
 
 - [x] GitHub Repo
 - [x] React Native + Expo app
+- [] ESLint and Prettier enabled
+- [] package.json updated with project name
+- [] package.json updated with description of app idea
 
-- [ish] ESLint and Prettier enabled
-- [ish] package.json updated with project name
-- [ish] package.json updated with description of app idea
 - [x] main branch (protected for final deliverables)
 
 - [x] development branch (for weekly progress)
-- [x] /restrospectives directory for future use
-- [x] /wireframes directory
-- [x] github project created
-- [x] milestone 1 tasks added to github project
-- [x] team members assigned to tasks
-- [x] tasks linked to issues where applicable
+- [] /restrospectives directory for future use
+- [] /wireframes directory
+- [] github project created
+- [] milestone 1 tasks added to github project
+- [] team members assigned to tasks
+- [] tasks linked to issues where applicable
 
 ### Software Development Plan & Wireframes
 
-- [ish] SOFTWARE_DEVELOPMENT_PLAN.md in the root of the repo
-- [x] /wireframes folder
-- [x] app screen wireframes
-- [x] user flow diagrams
+- [] SOFTWARE_DEVELOPMENT_PLAN.md in the root of the repo
+- [] /wireframes folder
+- [] app screen wireframes
+- [] user flow diagrams
 
   In the .md file:
 
-  - [x] team member names + assigned roles
-  - [ish] problem the app will solve
-  - [ish] target users and user personas
-  - [ish] mvp feature list
-  - [ish] planned tech stack and third-party libraries
-  - [ish] sprint plan or timeline overview
+  - [] team member names + assigned roles
+  - [] problem the app will solve
+  - [] target users and user personas
+  - [] mvp feature list
+  - [] planned tech stack and third-party libraries
+  - [] sprint plan or timeline overview
