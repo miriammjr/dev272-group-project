@@ -91,7 +91,13 @@ export default function TabLayout() {
         options={{
           title: 'Manage',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name='square.and.pencil' color={color} />
+            <>
+              <>
+                <IconSymbol size={28} name='square.and.pencil' color={color} />
+                <IconSymbol size={28} name='paperplane.fill' color={color} />
+              </>
+              <IconSymbol size={28} name='square.and.pencil' color={color} />
+            </>
           ),
         }}
       />
@@ -104,13 +110,36 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      {/* <Tabs.Screen
+        name='calendar'
+        options={{
+          title: 'Calendar',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name='calendar' color={color} />
+            <IconSymbol size={28} name="forecast" options={{
+          title: 'Forecast',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="calendar.fill" color={color} />
+
+
+
+
       <Tabs.Screen
         name='calendar'
         options={{
           title: 'Calendar',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name='calendar' color={color} />
+
           ),
+        }}
+      /> */}
+      <Tabs.Screen
+        name='redirect'
+        options={{
+          title: 'Redirect',
+          headerShown: false,
         }}
       />
     </Tabs>
