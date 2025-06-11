@@ -9,7 +9,9 @@
 - [] ESLint and Prettier enabled
 - [] package.json updated with project name
 - [] package.json updated with description of app idea
-- [] main branch (protected for final deliverables)
+
+- [x] main branch (protected for final deliverables)
+
 - [x] development branch (for weekly progress)
 - [] /restrospectives directory for future use
 - [] /wireframes directory
