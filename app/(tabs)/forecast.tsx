@@ -13,7 +13,7 @@ export default function ForecastScreen() {
   const { tasks, loading, error } = useTasks();
 
   const repeatingTasks = tasks.filter(
-    (task) => task.repeatIn !== null && task.repeatIn !== undefined,
+    task => task.repeatIn !== null && task.repeatIn !== undefined,
   );
 
   return (
@@ -27,17 +27,17 @@ export default function ForecastScreen() {
       }
     >
       <ThemedView style={styles.headerRow}>
-        <ThemedText type="title">Forecast</ThemedText>
+        <ThemedText type='title'>Forecast</ThemedText>
       </ThemedView>
 
       <ThemedView style={styles.stepContainer}>
         {loading && <ThemedText>Loading...</ThemedText>}
-        {error && <ThemedText type="error">{error}</ThemedText>}
+        {error && <ThemedText type='error'>{error}</ThemedText>}
         {!loading && repeatingTasks.length === 0 && (
           <ThemedText>No repeating tasks found.</ThemedText>
         )}
 
-        {repeatingTasks.map((task) => (
+        {repeatingTasks.map(task => (
           <TaskCard
             key={task.id}
             taskName={task.taskName}

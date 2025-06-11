@@ -95,7 +95,7 @@ export default function TaskCardToggle({
           title={task.completed ? 'Undo' : 'Complete'}
           onPress={handleToggle}
         />
-        <Button title="Delete" color="red" onPress={handleDelete} />
+        <Button title='Delete' color='red' onPress={handleDelete} />
       </View>
     </View>
   );
