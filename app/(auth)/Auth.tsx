@@ -1,4 +1,5 @@
 import { Button, Input } from '@rneui/themed';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { supabase } from '../../lib/supabase';
@@ -17,6 +18,7 @@ export default function Auth() {
     setLoading(false);
     if (!error) {
       console.log('LOGGED IN');
+      router.replace('/(tabs)/redirect');
     } else {
       Alert.alert('Login failed.');
       console.log(error);
