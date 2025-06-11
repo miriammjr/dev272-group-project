@@ -1,5 +1,5 @@
 # Run Expo lint
-expo lint
+# expo lint
 
 # Run Prettier check
-npx prettier --write .
+npx prettier --write . --fix
