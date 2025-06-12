@@ -19,3 +19,6 @@ Testing
 Getting the login/registration components working   
 Same structured project for group members       
 Reformatting screens    
+Updating Database      
+Linking database to appropriate screens  
+Themes       
