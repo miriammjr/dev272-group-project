@@ -71,21 +71,19 @@ export default function SettingsScreen() {
     ]);
   };
 
-
-const logoutUser = async () => {
-  try {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      throw error;
+  const logoutUser = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw error;
+      }
+      Alert.alert('Logged Out', 'You have been logged out.');
+      router.replace('/'); // Assuming your login screen is at the root route
+    } catch (e) {
+      console.error('Logout error:', e);
+      Alert.alert('Error', 'Failed to log out.');
     }
-    Alert.alert('Logged Out', 'You have been logged out.');
-    router.replace('/'); // Assuming your login screen is at the root route
-  } catch (e) {
-    console.error('Logout error:', e);
-    Alert.alert('Error', 'Failed to log out.');
-  }
-};
-
+  };
 
   return (
     <View style={styles.container}>
@@ -141,11 +139,7 @@ const logoutUser = async () => {
 
       {/* Logout */}
       <View style={styles.section}>
-        <Button
-          title='Logout'
-          color='#007AFF'
-          onPress={logoutUser}
-        />
+        <Button title='Logout' color='#007AFF' onPress={logoutUser} />
       </View>
     </View>
   );

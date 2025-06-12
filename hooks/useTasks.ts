@@ -1,16 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../utils/supabase';
 
-export function useTasks() {
+export const useTasks = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchTasks = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from('TaskList').select('*');
-    if (error) setError(error.message);
-    else setTasks(data);
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      setError('Failed to get user');
+      setLoading(false);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('TaskList')
+      .select('*')
+      .eq('idUserAccount', user.id); // Filter by user ID
+
+    if (error) {
+      setError(error.message);
+    } else {
+      setTasks(data);
+    }
+
     setLoading(false);
   };
 
@@ -19,4 +39,4 @@ export function useTasks() {
   }, []);
 
   return { tasks, loading, error, refetch: fetchTasks };
-}
+};

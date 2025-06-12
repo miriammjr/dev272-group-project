@@ -12,66 +12,65 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-<Tabs
-  screenOptions={{
-    tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-    headerShown: false,
-    tabBarButton: HapticTab,
-    tabBarBackground: TabBarBackground,
-    tabBarStyle: Platform.select({
-      ios: {
-        position: 'absolute',
-      },
-      default: {},
-    }),
-  }}
->
-  <Tabs.Screen
-    name='home'
-    options={{
-      title: 'Home',
-      tabBarIcon: ({ color }) => (
-        <IconSymbol size={28} name='house.fill' color={color} />
-      ),
-    }}
-  />
-  <Tabs.Screen
-    name='management'
-    options={{
-      title: 'Manage',
-      tabBarIcon: ({ color }) => (
-        <IconSymbol size={28} name='square.and.pencil' color={color} />
-      ),
-    }}
-  />
-  <Tabs.Screen
-    name='forecast'
-    options={{
-      title: 'Forecast',
-      tabBarIcon: ({ color }) => (
-        <IconSymbol size={28} name='calendar.badge.clock' color={color} />
-      ),
-    }}
-  />
-  <Tabs.Screen
-    name='calendar'
-    options={{
-      title: 'Calendar',
-      tabBarIcon: ({ color }) => (
-        <IconSymbol size={28} name='calendar' color={color} />
-      ),
-    }}
-  />
-  <Tabs.Screen
-    name='todolist'
-    options={{
-      title: 'Todo List',
-      tabBarIcon: ({ color }) => (
-        <IconSymbol size={28} name='checklist' color={color} />
-      ),
-    }}
-  />
-</Tabs>
-
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        headerShown: false,
+        tabBarButton: HapticTab,
+        tabBarBackground: TabBarBackground,
+        tabBarStyle: Platform.select({
+          ios: {
+            position: 'absolute',
+          },
+          default: {},
+        }),
+      }}
+    >
+      <Tabs.Screen
+        name='home'
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name='house.fill' color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name='management'
+        options={{
+          title: 'Manage',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name='square.and.pencil' color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name='forecast'
+        options={{
+          title: 'Forecast',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name='calendar.badge.clock' color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name='calendar'
+        options={{
+          title: 'Calendar',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name='calendar' color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name='todolist'
+        options={{
+          title: 'Todo List',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name='checklist' color={color} />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }
