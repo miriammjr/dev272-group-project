@@ -62,6 +62,15 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name='todolist'
+        options={{
+          title: 'Todo List',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name='checklist' color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

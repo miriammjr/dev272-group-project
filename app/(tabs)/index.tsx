@@ -1,122 +1,142 @@
-import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
+  Text,
+  StyleSheet,
+  Modal,
+  TextInput,
+  Button,
+  TouchableOpacity,
 } from 'react-native';
+import { Image } from 'expo-image';
+import {
+  isToday,
+  isThisWeek,
+  isThisMonth,
+  parseISO,
+  isBefore,
+  startOfToday,
+  differenceInDays,
+} from 'date-fns';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
-interface Task {
-  id: string;
-  name: string;
-  frequency: number;
-  createdAt: number;
-  lastCompletedAt?: number | null;
-}
+import ParallaxScrollView from '@/components/ParallaxScrollView';
+import TaskCardToggle from '@/components/TaskCardToggle';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
 
-export default function HomeScreen() {
+import { useTasks } from '@/hooks/useTasks';
+import { useAddTask } from '@/hooks/useAddTask';
+
+type Task = {
+  id: number;
+  taskName: string;
+  dueDate: string;
+  completed: boolean;
+  frequency?: number;
+  lastCompletedAt?: string | null;
+};
+
+export default function Resupply() {
   const router = useRouter();
-  const [dueTasks, setDueTasks] = useState<Task[]>([]);
-  const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
+  const { tasks, loading, error, refetch } = useTasks();
+  const { addTask } = useAddTask(refetch);
 
-  // useEffect(() => {
-  //   const loadTasks = async () => {
-  //     try {
-  //       const raw = await AsyncStorage.getItem('tasks');
-  //       if (!raw) return;
-  //       const allTasks: Task[] = JSON.parse(raw);
-  //       const now = Date.now();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [taskName, setTaskName] = useState('');
+  const [dueDate, setDueDate] = useState('');
 
-  //       const due: Task[] = [];
-  //       const done: Task[] = [];
+  const handleAddTask = async () => {
+    if (!taskName || !dueDate) return;
 
-  //       for (const task of allTasks) {
-  //         const lastDone = task.lastCompletedAt ?? task.createdAt;
-  //         const daysSince = Math.floor(
-  //           (now - lastDone) / (1000 * 60 * 60 * 24),
-  //         );
-  //         if (daysSince >= task.frequency) {
-  //           due.push(task);
-  //         } else if (daysSince === 0) {
-  //           done.push(task);
-  //         }
-  //       }
-
-  //       setDueTasks(due);
-  //       setCompletedTasks(done);
-  //     } catch (e) {
-  //       console.error('Error loading tasks:', e);
-  //     }
-  //   };
-
-  //   loadTasks();
-  // }, []);
-  useEffect(() => {
-    const loadTasks = async () => {
-      try {
-        const choresRaw = await AsyncStorage.getItem('chores');
-        const suppliesRaw = await AsyncStorage.getItem('supplies');
-
-        const chores: Task[] = choresRaw ? JSON.parse(choresRaw) : [];
-        const supplies: Task[] = suppliesRaw ? JSON.parse(suppliesRaw) : [];
-        const allTasks = [...chores, ...supplies];
-
-        const now = Date.now();
-        const due: Task[] = [];
-        const done: Task[] = [];
-
-        for (const task of allTasks) {
-          const lastDone = task.lastCompletedAt ?? task.createdAt ?? now;
-          const daysSince = Math.floor(
-            (now - lastDone) / (1000 * 60 * 60 * 24),
-          );
-          if (daysSince >= task.frequency) {
-            due.push(task);
-          } else if (daysSince === 0) {
-            done.push(task);
-          }
-        }
-
-        setDueTasks(due);
-        setCompletedTasks(done);
-      } catch (e) {
-        console.error('Error loading chores/supplies:', e);
-      }
-    };
-
-    loadTasks();
-  }, []);
-
-  const markAsDone = async (task: Task) => {
     try {
-      const raw = await AsyncStorage.getItem('tasks');
-      const allTasks: Task[] = raw ? JSON.parse(raw) : [];
+      const localDate = new Date(`${dueDate}T00:00:00`);
+      const offsetMinutes = localDate.getTimezoneOffset();
+      const utcDate = new Date(localDate.getTime() - offsetMinutes * 60000);
 
-      const updatedTasks = allTasks.map(t =>
-        t.id === task.id ? { ...t, lastCompletedAt: Date.now() } : t,
-      );
+      await addTask({
+        taskName,
+        dueDate: utcDate.toISOString(),
+      });
 
-      await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
-
-      setDueTasks(prev => prev.filter(t => t.id !== task.id));
-      setCompletedTasks(prev => [
-        ...prev,
-        { ...task, lastCompletedAt: Date.now() },
-      ]);
-    } catch (e) {
-      console.error('Failed to mark task as done', e);
-      Alert.alert('Error', 'Something went wrong marking the task as done.');
+      setModalVisible(false);
+      setTaskName('');
+      setDueDate('');
+    } catch (err) {
+      alert('Error adding task: ' + err.message);
     }
   };
 
+  const categorizeTasks = (tasks: Task[]) => {
+    const today: Task[] = [];
+    const week: Task[] = [];
+    const month: Task[] = [];
+    const completed: Task[] = [];
+
+    const now = new Date();
+    const todayStart = startOfToday();
+
+    tasks.forEach(task => {
+      if (task.completed) {
+        completed.push(task);
+        return;
+      }
+
+      const due = parseISO(task.dueDate);
+
+      if (task.frequency && task.lastCompletedAt) {
+        const lastDone = parseISO(task.lastCompletedAt);
+        const daysSince = differenceInDays(now, lastDone);
+        if (daysSince >= task.frequency) {
+          today.push(task);
+          return;
+        }
+      }
+
+      if (isBefore(due, todayStart) || isToday(due)) {
+        today.push(task);
+      } else if (isThisWeek(due, { weekStartsOn: 1 })) {
+        week.push(task);
+      } else if (isThisMonth(due)) {
+        month.push(task);
+      }
+    });
+
+    const sortByDueDate = (a: Task, b: Task) =>
+      new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+
+    return {
+      today: today.sort(sortByDueDate),
+      week: week.sort(sortByDueDate),
+      month: month.sort(sortByDueDate),
+      completed: completed.sort(sortByDueDate),
+    };
+  };
+
+  const { today, week, month, completed } = categorizeTasks(tasks);
+
+  const renderSection = (title: string, tasks: Task[]) => (
+    <View style={styles.section}>
+      <ThemedText type='subtitle'>{title}</ThemedText>
+      {tasks.length === 0 ? (
+        <Text style={styles.emptyText}>No tasks</Text>
+      ) : (
+        tasks.map(task => (
+          <TaskCardToggle
+            key={task.id}
+            task={task}
+            onStatusChange={refetch}
+            onDelete={refetch}
+          />
+        ))
+      )}
+    </View>
+  );
+
   return (
-    <ScrollView style={styles.container}>
-      {/* Settings Icon in the top right */}
+    <View style={{ flex: 1 }}>
+      {/* Absolute Settings Button */}
       <TouchableOpacity
         style={styles.settingsIcon}
         onPress={() => router.push('/settings')}
@@ -124,137 +144,142 @@ export default function HomeScreen() {
       >
         <Ionicons name='settings-outline' size={28} color='#444' />
       </TouchableOpacity>
-      <Text style={styles.heading}>🏡 Resupply</Text>
-      <Text style={styles.subheading}>
-        This is what you need to handle today:
-      </Text>
 
-      <Text style={styles.sectionTitle}>🛠 Tasks Due</Text>
-      {dueTasks.length === 0 ? (
-        <Text style={styles.noTasks}>No tasks due today 🎉</Text>
-      ) : (
-        dueTasks.map(task => (
+      <ParallaxScrollView
+        headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+        headerImage={
+          <Image
+            source={require('@/assets/images/partial-react-logo.png')}
+            style={styles.reactLogo}
+          />
+        }
+      >
+        <ThemedView style={styles.headerRow}>
+          <ThemedText type='title'>Resupply</ThemedText>
           <TouchableOpacity
-            key={task.id}
-            onPress={() => markAsDone(task)}
-            style={styles.taskCard}
+            style={styles.addButtonTop}
+            onPress={() => setModalVisible(true)}
           >
-            <Text style={styles.taskText}>{task.name}</Text>
-            <Text style={styles.taskFreq}>Every {task.frequency} days</Text>
-            <Text style={styles.mark}>Tap to mark ✅</Text>
+            <Text style={styles.addButtonText}>+ Add Task</Text>
           </TouchableOpacity>
-        ))
-      )}
+        </ThemedView>
 
-      <Text style={styles.sectionTitle}>✅ Completed Today</Text>
-      {completedTasks.length === 0 ? (
-        <Text style={styles.noTasks}>Nothing completed yet</Text>
-      ) : (
-        completedTasks.map(task => (
-          <View key={task.id} style={[styles.taskCard, styles.completedCard]}>
-            <Text style={styles.taskText}>{task.name}</Text>
-            <Text style={styles.taskFreq}>Done today 🎉</Text>
+        <ThemedView style={styles.stepContainer}>
+          {loading && <Text>Loading...</Text>}
+          {error && <Text style={{ color: 'red' }}>{error}</Text>}
+          {renderSection('Due Today', today)}
+          {renderSection('Due This Week', week)}
+          {renderSection('Due This Month', month)}
+          {renderSection('Completed', completed)}
+        </ThemedView>
+      </ParallaxScrollView>
+
+      <Modal visible={modalVisible} animationType='slide' transparent>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Add New Task</Text>
+
+            <TextInput
+              style={styles.input}
+              placeholder='Task Name'
+              value={taskName}
+              onChangeText={setTaskName}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder='Due Date (YYYY-MM-DD)'
+              value={dueDate}
+              onChangeText={setDueDate}
+            />
+
+            <View style={styles.modalButtons}>
+              <Button title='Cancel' onPress={() => setModalVisible(false)} />
+              <Button title='Add Task' onPress={handleAddTask} />
+            </View>
           </View>
-        ))
-      )}
-
-      <View style={styles.navButtons}>
-        <NavButton
-          label='🧹 Daily To Do'
-          onPress={() => router.push('/daily-todo')}
-        />
-        <NavButton
-          label='📅 Forecast'
-          onPress={() => router.push('/(tabs)/forecast')}
-        />
-        <NavButton label='🛒 Shop' onPress={() => router.push('/shop')} />
-      </View>
-    </ScrollView>
-  );
-}
-
-function NavButton({ label, onPress }: { label: string; onPress: () => void }) {
-  return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.buttonText}>{label}</Text>
-    </TouchableOpacity>
+        </View>
+      </Modal>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: '#f9f9f9',
-  },
-  heading: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subheading: {
-    fontSize: 16,
-    color: '#555',
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 16,
+    paddingHorizontal: 16,
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginTop: 20,
+  stepContainer: {
+    gap: 8,
     marginBottom: 8,
+    paddingHorizontal: 16,
   },
-  noTasks: {
-    fontSize: 16,
-    color: '#888',
-    marginVertical: 10,
-    textAlign: 'center',
+  reactLogo: {
+    height: 178,
+    width: 290,
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
   },
-  taskCard: {
-    backgroundColor: '#e7f0f7',
-    padding: 16,
+  addButtonTop: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+  },
+  addButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
     borderRadius: 10,
-    marginBottom: 10,
-  },
-  completedCard: {
-    backgroundColor: '#d4edda',
-  },
-  taskText: {
-    fontSize: 18,
-    fontWeight: '500',
-  },
-  taskFreq: {
-    fontSize: 14,
-    color: '#666',
-  },
-  mark: {
-    fontSize: 14,
-    color: '#1D3D47',
-    marginTop: 4,
-  },
-  navButtons: {
-    marginTop: 32,
+    padding: 20,
     gap: 12,
   },
-  button: {
-    backgroundColor: '#1D3D47',
-    paddingVertical: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  buttonText: {
-    color: '#fff',
+  modalTitle: {
     fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 6,
+    padding: 10,
+    fontSize: 16,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  section: {
+    marginBottom: 24,
+  },
+  emptyText: {
+    fontStyle: 'italic',
+    color: '#888',
+    marginTop: 8,
   },
   settingsIcon: {
     position: 'absolute',
-    top: 18,
-    // left: 22,
+    top: 48,
     right: 22,
-    zIndex: 10,
+    zIndex: 100,
     padding: 6,
     backgroundColor: '#fff',
     borderRadius: 24,
-    elevation: 2,
+    elevation: 4,
   },
 });
