@@ -18,8 +18,8 @@
 
 **Key wins and challenges**
 
-- Because tasks were split up, team members were able to complete things independently without needing to wait for others to finish their parts for the most part. 
-- However, due to this, it is hard to merge branches, both due to a lack of communication and due to merge conflicts. 
+- Because tasks were split up, team members were able to complete things independently without needing to wait for others to finish their parts for the most part.
+- However, due to this, it is hard to merge branches, both due to a lack of communication and due to merge conflicts.
 
 **Next sprint priorities**
 
