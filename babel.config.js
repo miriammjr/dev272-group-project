@@ -9,6 +9,7 @@ module.exports = {
         targets: { esmodules: false, node: 'current' },
       },
     ],
+    '@babel/preset-react',
   ],
 
   plugins: [],
