@@ -1,14 +1,7 @@
-import { supabase } from '@/utils/supabase';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import * as Notifications from 'expo-notifications';
-import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../utils/supabase'; // Adjust path if needed
-import { router } from 'expo-router';
-
 import {
   Alert,
+  Button,
   Platform,
   Pressable,
   StyleSheet,
@@ -18,6 +11,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import * as Notifications from 'expo-notifications';
+import { router } from 'expo-router';
+import { supabase } from '@/utils/supabase';
 
 export default function SettingsScreen() {
   const [email, setEmail] = useState('');
@@ -41,8 +39,8 @@ export default function SettingsScreen() {
       if (notif === 'true') setNotificationsEnabled(true);
       if (storedTime) setReminderTime(new Date(storedTime));
     };
-    loadData();
 
+    loadData();
     Notifications.requestPermissionsAsync();
   }, []);
 
@@ -70,10 +68,7 @@ export default function SettingsScreen() {
     await AsyncStorage.setItem('email', email);
     await AsyncStorage.setItem('password', password);
     await AsyncStorage.setItem('homeName', homeName);
-    await AsyncStorage.setItem(
-      'notifications',
-      notificationsEnabled.toString(),
-    );
+    await AsyncStorage.setItem('notifications', notificationsEnabled.toString());
     await AsyncStorage.setItem('reminderTime', reminderTime.toISOString());
 
     if (notificationsEnabled) {
@@ -85,35 +80,25 @@ export default function SettingsScreen() {
     Alert.alert('Saved!', 'Your settings were saved.');
   };
 
-  const logout = async () => {
-    await supabase.auth.signOut();
-    await AsyncStorage.multiRemove([
-      'email',
-      'password',
-      'homeName',
-      'reminderTime',
-    ]);
-    await Notifications.cancelAllScheduledNotificationsAsync();
-    router.replace('/');
+  const logoutUser = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      await AsyncStorage.multiRemove(['email', 'password', 'homeName', 'reminderTime']);
+      await Notifications.cancelAllScheduledNotificationsAsync();
+
+      Alert.alert('Logged Out', 'You have been logged out.');
+      router.replace('/');
+    } catch (e) {
+      console.error('Logout error:', e);
+      Alert.alert('Error', 'Failed to log out.');
+    }
   };
 
   const onTimeChange = (event: any, selectedTime?: Date) => {
     setShowTimePicker(false);
     if (selectedTime) setReminderTime(selectedTime);
-  };
-
-  const logoutUser = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        throw error;
-      }
-      Alert.alert('Logged Out', 'You have been logged out.');
-      router.replace('/'); // Assuming your login screen is at the root route
-    } catch (e) {
-      console.error('Logout error:', e);
-      Alert.alert('Error', 'Failed to log out.');
-    }
   };
 
   return (
@@ -126,8 +111,8 @@ export default function SettingsScreen() {
           style={styles.input}
           value={email}
           onChangeText={setEmail}
-          placeholder='Enter your email'
-          placeholderTextColor='#aaa'
+          placeholder="Enter your email"
+          placeholderTextColor="#aaa"
         />
 
         <Text style={styles.label}>Password</Text>
@@ -135,9 +120,9 @@ export default function SettingsScreen() {
           style={styles.input}
           value={password}
           onChangeText={setPassword}
-          placeholder='Enter your password'
+          placeholder="Enter your password"
           secureTextEntry
-          placeholderTextColor='#aaa'
+          placeholderTextColor="#aaa"
         />
 
         <Text style={styles.label}>Home Name</Text>
@@ -145,8 +130,8 @@ export default function SettingsScreen() {
           style={styles.input}
           value={homeName}
           onChangeText={setHomeName}
-          placeholder='Name your home'
-          placeholderTextColor='#aaa'
+          placeholder="Name your home"
+          placeholderTextColor="#aaa"
         />
 
         <View style={styles.switchRow}>
@@ -160,10 +145,7 @@ export default function SettingsScreen() {
         </View>
 
         <Text style={styles.label}>Reminder Time</Text>
-        <Pressable
-          style={styles.timeBox}
-          onPress={() => setShowTimePicker(true)}
-        >
+        <Pressable style={styles.timeBox} onPress={() => setShowTimePicker(true)}>
           <Text style={styles.timeText}>
             {reminderTime.toLocaleTimeString([], {
               hour: '2-digit',
@@ -174,10 +156,10 @@ export default function SettingsScreen() {
 
         {showTimePicker && (
           <DateTimePicker
-            mode='time'
+            mode="time"
             value={reminderTime}
             is24Hour={true}
-            display='default'
+            display="default"
             onChange={onTimeChange}
           />
         )}
@@ -186,14 +168,13 @@ export default function SettingsScreen() {
           <Text style={styles.saveButtonText}>Save Settings</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+        <TouchableOpacity style={styles.logoutButton} onPress={logoutUser}>
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Logout */}
       <View style={styles.section}>
-        <Button title='Logout' color='#007AFF' onPress={logoutUser} />
+        <Button title="Logout" color="#007AFF" onPress={logoutUser} />
       </View>
     </View>
   );
@@ -204,9 +185,6 @@ const styles = StyleSheet.create({
     padding: 24,
     flex: 1,
     backgroundColor: '#f9fafb',
-  },
-  backButton: {
-    marginBottom: 12,
   },
   title: {
     fontSize: 28,
@@ -278,5 +256,8 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
+  },
+  section: {
+    marginTop: 24,
   },
 });
