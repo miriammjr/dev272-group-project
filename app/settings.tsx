@@ -4,6 +4,9 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { supabase } from '../utils/supabase'; // Adjust path if needed
+import { router } from 'expo-router';
+
 import {
   Alert,
   Platform,
@@ -99,6 +102,20 @@ export default function SettingsScreen() {
     if (selectedTime) setReminderTime(selectedTime);
   };
 
+  const logoutUser = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw error;
+      }
+      Alert.alert('Logged Out', 'You have been logged out.');
+      router.replace('/'); // Assuming your login screen is at the root route
+    } catch (e) {
+      console.error('Logout error:', e);
+      Alert.alert('Error', 'Failed to log out.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Settings</Text>
@@ -172,6 +189,11 @@ export default function SettingsScreen() {
         <TouchableOpacity style={styles.logoutButton} onPress={logout}>
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
+      </View>
+
+      {/* Logout */}
+      <View style={styles.section}>
+        <Button title='Logout' color='#007AFF' onPress={logoutUser} />
       </View>
     </View>
   );

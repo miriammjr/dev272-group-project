@@ -23,6 +23,11 @@ export default function Auth() {
 
   // --- AUTHENTICATION FUNCTIONS ---
   async function signInWithEmail() {
+    if (!email || !password) {
+      Alert.alert('Please enter both email and password.');
+      return;
+    }
+
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -35,9 +40,17 @@ export default function Auth() {
     } else {
       router.replace('/(tabs)/home'); // Make sure this route is correct
     }
+
+    console.log('LOGGED IN');
+    router.replace('/(tabs)/home');
   }
 
   async function signUpWithEmail() {
+    if (!email || !password) {
+      Alert.alert('Please enter both email and password.');
+      return;
+    }
+
     setLoading(true);
     const {
       data: { session },
