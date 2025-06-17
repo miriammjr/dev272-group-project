@@ -41,10 +41,14 @@ export default function SettingsScreen() {
     };
 
     loadData();
-    Notifications.requestPermissionsAsync();
+    if (Platform.OS !== 'web') {
+      Notifications.requestPermissionsAsync();
+    }
   }, []);
 
   const scheduleDailyNotification = async (time: Date) => {
+    if (Platform.OS === 'web') return;
+
     await Notifications.cancelAllScheduledNotificationsAsync();
 
     const hour = time.getHours();
@@ -71,10 +75,12 @@ export default function SettingsScreen() {
     await AsyncStorage.setItem('notifications', notificationsEnabled.toString());
     await AsyncStorage.setItem('reminderTime', reminderTime.toISOString());
 
-    if (notificationsEnabled) {
-      await scheduleDailyNotification(reminderTime);
-    } else {
-      await Notifications.cancelAllScheduledNotificationsAsync();
+    if (Platform.OS !== 'web') {
+      if (notificationsEnabled) {
+        await scheduleDailyNotification(reminderTime);
+      } else {
+        await Notifications.cancelAllScheduledNotificationsAsync();
+      }
     }
 
     Alert.alert('Saved!', 'Your settings were saved.');
@@ -85,8 +91,16 @@ export default function SettingsScreen() {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
-      await AsyncStorage.multiRemove(['email', 'password', 'homeName', 'reminderTime']);
-      await Notifications.cancelAllScheduledNotificationsAsync();
+      await AsyncStorage.multiRemove([
+        'email',
+        'password',
+        'homeName',
+        'reminderTime',
+      ]);
+
+      if (Platform.OS !== 'web') {
+        await Notifications.cancelAllScheduledNotificationsAsync();
+      }
 
       Alert.alert('Logged Out', 'You have been logged out.');
       router.replace('/');
@@ -145,7 +159,10 @@ export default function SettingsScreen() {
         </View>
 
         <Text style={styles.label}>Reminder Time</Text>
-        <Pressable style={styles.timeBox} onPress={() => setShowTimePicker(true)}>
+        <Pressable
+          style={styles.timeBox}
+          onPress={() => setShowTimePicker(true)}
+        >
           <Text style={styles.timeText}>
             {reminderTime.toLocaleTimeString([], {
               hour: '2-digit',
