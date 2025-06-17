@@ -43,7 +43,7 @@ export default function ToDoScreen() {
         }
 
         setDueTasks(due);
-      } catch () {
+      } catch (e) {
         console.error('Error loading tasks:', e);
       }
     };

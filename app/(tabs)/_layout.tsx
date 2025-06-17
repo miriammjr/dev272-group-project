@@ -27,47 +27,47 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name='home'
+        name="home"
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name='house.fill' color={color} />
+            <IconSymbol size={28} name="house.fill" color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name='management'
-        options={{
-          title: 'Manage',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name='square.and.pencil' color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name='forecast'
-        options={{
-          title: 'Forecast',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name='calendar.badge.clock' color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name='calendar'
+        name="calendar"
         options={{
           title: 'Calendar',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name='calendar' color={color} />
+            <IconSymbol size={28} name="calendar" color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name='todolist'
+        name="forecast"
         options={{
-          title: 'Todo List',
+          title: 'Forecast',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name='checklist' color={color} />
+            <IconSymbol size={28} name="calendar.badge.clock" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="management"
+        options={{
+          title: 'Manage',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="square.and.pencil" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="shop"
+        options={{
+          title: 'Shop',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="cart.fill" color={color} />
           ),
         }}
       />
