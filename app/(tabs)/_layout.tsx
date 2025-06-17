@@ -31,6 +31,7 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           headerShown: false,
+          tabBarLabelPosition: 'below-icon',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name='house.fill' color={color} />
           ),
@@ -42,6 +43,7 @@ export default function TabLayout() {
         options={{
           title: 'Manage',
           headerShown: false,
+          tabBarLabelPosition: 'below-icon',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name='square.and.pencil' color={color} />
           ),
@@ -52,6 +54,7 @@ export default function TabLayout() {
         options={{
           title: 'Forecast',
           headerShown: false,
+          tabBarLabelPosition: 'below-icon',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name='calendar.badge.clock' color={color} />
           ),
@@ -62,6 +65,7 @@ export default function TabLayout() {
         options={{
           title: 'Calendar',
           headerShown: false,
+          tabBarLabelPosition: 'below-icon',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name='calendar' color={color} />
           ),
@@ -71,6 +75,7 @@ export default function TabLayout() {
         name='todolist'
         options={{
           title: 'Todo List',
+          tabBarLabelPosition: 'below-icon',
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name='checklist' color={color} />
@@ -82,6 +87,7 @@ export default function TabLayout() {
         options={{
           title: 'Shop',
           headerShown: false,
+          tabBarLabelPosition: 'below-icon',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name='cart' color={color} />
           ),
