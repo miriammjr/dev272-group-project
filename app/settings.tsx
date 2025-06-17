@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
-  Button,
   Platform,
   Pressable,
   StyleSheet,
@@ -189,10 +188,6 @@ export default function SettingsScreen() {
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
       </View>
-
-      <View style={styles.section}>
-        <Button title="Logout" color="#007AFF" onPress={logoutUser} />
-      </View>
     </View>
   );
 }
@@ -273,8 +268,5 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
-  },
-  section: {
-    marginTop: 24,
   },
 });
