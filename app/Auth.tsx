@@ -33,7 +33,7 @@ export default function Auth() {
     if (error) {
       Alert.alert('Login Failed', error.message);
     } else {
-      router.replace('/(tabs)/redirect'); // Make sure this route is correct
+      router.replace('/(tabs)/home'); // Make sure this route is correct
     }
   }
 
