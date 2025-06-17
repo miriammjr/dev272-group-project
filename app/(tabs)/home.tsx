@@ -1,33 +1,33 @@
+import { Ionicons } from '@expo/vector-icons';
+import {
+  differenceInDays,
+  isBefore,
+  isThisMonth,
+  isThisWeek,
+  isToday,
+  parseISO,
+  startOfToday,
+} from 'date-fns';
+import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  TextInput,
   Button,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import { Image } from 'expo-image';
-import {
-  isToday,
-  isThisWeek,
-  isThisMonth,
-  parseISO,
-  isBefore,
-  startOfToday,
-  differenceInDays,
-} from 'date-fns';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import TaskCardToggle from '@/components/TaskCardToggle';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
-import { useTasks } from '@/hooks/useTasks';
 import { useAddTask } from '@/hooks/useAddTask';
+import { useTasks } from '@/hooks/useTasks';
 
 type Task = {
   id: number;
