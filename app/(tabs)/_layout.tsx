@@ -83,17 +83,6 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name='shop'
-        options={{
-          title: 'Shop',
-          headerShown: false,
-          tabBarLabelPosition: 'below-icon',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name='cart' color={color} />
-          ),
-        }}
-      />
     </Tabs>
   );
 }
