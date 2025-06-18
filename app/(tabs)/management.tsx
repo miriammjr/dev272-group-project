@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 24,
-    width: '85%',
+    width: '60%',
   },
   modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 12 },
   input: {

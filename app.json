@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "This identifier will be used to send you reminders.",
+        "UIBackgroundModes": ["remote-notification", "fetch"]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -34,7 +38,9 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true

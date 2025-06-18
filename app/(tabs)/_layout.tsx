@@ -39,13 +39,13 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name='management'
+        name='calendar'
         options={{
-          title: 'Manage',
+          title: 'Calendar',
           headerShown: false,
           tabBarLabelPosition: 'below-icon',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name='square.and.pencil' color={color} />
+            <IconSymbol size={28} name='calendar' color={color} />
           ),
         }}
       />
@@ -61,24 +61,25 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name='calendar'
+        name='management'
         options={{
-          title: 'Calendar',
+          title: 'Manage',
+
           headerShown: false,
           tabBarLabelPosition: 'below-icon',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name='calendar' color={color} />
+            <IconSymbol size={28} name='square.and.pencil' color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name='todolist'
+        name='shop'
         options={{
-          title: 'Todo List',
+          title: 'Shop',
           tabBarLabelPosition: 'below-icon',
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name='checklist' color={color} />
+            <IconSymbol size={28} name='cart.fill' color={color} />
           ),
         }}
       />
