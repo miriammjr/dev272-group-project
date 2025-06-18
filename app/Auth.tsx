@@ -68,7 +68,16 @@ export default function Auth() {
   }
 
   async function forgotPassword() {
-    Alert.alert('Feature Coming Soon', "Reset password isn't available yet.");
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/resetPassword`,
+    });
+    if (error) {
+      Alert.alert('Failed', error.message);
+      console.log(error.message);
+    } else {
+      Alert.alert('Check your email!');
+      console.log('success');
+    }
   }
 
   return (
