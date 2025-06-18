@@ -42,7 +42,6 @@ export default function Auth() {
     }
 
     console.log('LOGGED IN');
-    router.replace('/(tabs)/home');
   }
 
   async function signUpWithEmail() {
