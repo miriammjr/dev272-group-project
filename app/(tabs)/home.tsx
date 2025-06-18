@@ -8,11 +8,12 @@ import {
   parseISO,
   startOfToday,
 } from 'date-fns';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  Button,
   Modal,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,

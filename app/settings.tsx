@@ -188,7 +188,7 @@ export default function SettingsScreen() {
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </>
   );
 }
 
