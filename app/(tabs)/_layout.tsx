@@ -10,7 +10,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-
+  console.log(colorScheme);
   return (
     <Tabs
       screenOptions={{
@@ -27,18 +27,23 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name='index'
+        name='home'
         options={{
           title: 'Home',
+          headerShown: false,
+          tabBarLabelPosition: 'below-icon',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name='house.fill' color={color} />
           ),
         }}
       />
+
       <Tabs.Screen
         name='management'
         options={{
           title: 'Manage',
+          headerShown: false,
+          tabBarLabelPosition: 'below-icon',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name='square.and.pencil' color={color} />
           ),
@@ -48,6 +53,8 @@ export default function TabLayout() {
         name='forecast'
         options={{
           title: 'Forecast',
+          headerShown: false,
+          tabBarLabelPosition: 'below-icon',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name='calendar.badge.clock' color={color} />
           ),
@@ -57,6 +64,8 @@ export default function TabLayout() {
         name='calendar'
         options={{
           title: 'Calendar',
+          headerShown: false,
+          tabBarLabelPosition: 'below-icon',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name='calendar' color={color} />
           ),
@@ -66,8 +75,21 @@ export default function TabLayout() {
         name='todolist'
         options={{
           title: 'Todo List',
+          tabBarLabelPosition: 'below-icon',
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name='checklist' color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name='shop'
+        options={{
+          title: 'Shop',
+          headerShown: false,
+          tabBarLabelPosition: 'below-icon',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name='cart' color={color} />
           ),
         }}
       />

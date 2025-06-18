@@ -83,8 +83,8 @@ export default function Auth() {
         <TextInput
           onChangeText={setEmail}
           value={email}
-          placeholder="email@address.com"
-          autoCapitalize="none"
+          placeholder='email@address.com'
+          autoCapitalize='none'
           style={styles.input}
         />
       </View>
@@ -94,23 +94,35 @@ export default function Auth() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          placeholder="Password"
-          autoCapitalize="none"
+          placeholder='Password'
+          autoCapitalize='none'
           style={styles.input}
         />
       </View>
 
-      {loading && <ActivityIndicator size="large" color="#0000ff" />}
+      {loading && <ActivityIndicator size='large' color='#0000ff' />}
 
       <View style={styles.div}>
         <View style={styles.button}>
-          <Button title="Sign in" disabled={loading} onPress={signInWithEmail} />
+          <Button
+            title='Sign in'
+            disabled={loading}
+            onPress={signInWithEmail}
+          />
         </View>
         <View style={styles.button}>
-          <Button title="Sign up" disabled={loading} onPress={signUpWithEmail} />
+          <Button
+            title='Sign up'
+            disabled={loading}
+            onPress={signUpWithEmail}
+          />
         </View>
         <View style={styles.button}>
-          <Button title="Reset Password" disabled={loading} onPress={forgotPassword} />
+          <Button
+            title='Reset Password'
+            disabled={loading}
+            onPress={forgotPassword}
+          />
         </View>
       </View>
     </View>
