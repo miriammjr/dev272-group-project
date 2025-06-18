@@ -71,7 +71,10 @@ export default function SettingsScreen() {
     await AsyncStorage.setItem('email', email);
     await AsyncStorage.setItem('password', password);
     await AsyncStorage.setItem('homeName', homeName);
-    await AsyncStorage.setItem('notifications', notificationsEnabled.toString());
+    await AsyncStorage.setItem(
+      'notifications',
+      notificationsEnabled.toString(),
+    );
     await AsyncStorage.setItem('reminderTime', reminderTime.toISOString());
 
     if (Platform.OS !== 'web') {
@@ -124,8 +127,8 @@ export default function SettingsScreen() {
           style={styles.input}
           value={email}
           onChangeText={setEmail}
-          placeholder="Enter your email"
-          placeholderTextColor="#aaa"
+          placeholder='Enter your email'
+          placeholderTextColor='#aaa'
         />
 
         <Text style={styles.label}>Password</Text>
@@ -133,9 +136,9 @@ export default function SettingsScreen() {
           style={styles.input}
           value={password}
           onChangeText={setPassword}
-          placeholder="Enter your password"
+          placeholder='Enter your password'
           secureTextEntry
-          placeholderTextColor="#aaa"
+          placeholderTextColor='#aaa'
         />
 
         <Text style={styles.label}>Home Name</Text>
@@ -143,8 +146,8 @@ export default function SettingsScreen() {
           style={styles.input}
           value={homeName}
           onChangeText={setHomeName}
-          placeholder="Name your home"
-          placeholderTextColor="#aaa"
+          placeholder='Name your home'
+          placeholderTextColor='#aaa'
         />
 
         <View style={styles.switchRow}>
@@ -172,10 +175,10 @@ export default function SettingsScreen() {
 
         {showTimePicker && (
           <DateTimePicker
-            mode="time"
+            mode='time'
             value={reminderTime}
             is24Hour={true}
-            display="default"
+            display='default'
             onChange={onTimeChange}
           />
         )}
