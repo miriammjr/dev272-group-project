@@ -55,7 +55,7 @@ export default function Home() {
     dueDate: string,
     isRepeating: boolean,
     repeatDays: number | null,
-    taskType: string
+    taskType: string,
   ) => {
     try {
       await addTask({
@@ -113,11 +113,11 @@ export default function Home() {
 
   const renderSection = (
     title: 'Due Today' | 'Due This Week' | 'Due This Month' | 'Completed',
-    tasksToRender: Task[]
+    tasksToRender: Task[],
   ) => (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <ThemedText type="subtitle">{title}</ThemedText>
+        <ThemedText type='subtitle'>{title}</ThemedText>
         <View style={styles.taskCountBadge}>
           <Text style={styles.taskCountText}>{tasksToRender.length}</Text>
         </View>
@@ -141,12 +141,12 @@ export default function Home() {
   return (
     <View style={styles.container}>
       <View style={styles.topHeader}>
-        <ThemedText type="title">🏡 Resupply</ThemedText>
+        <ThemedText type='title'>🏡 Resupply</ThemedText>
         <TouchableOpacity
           onPress={() => router.push('/settings')}
-          accessibilityLabel="Settings"
+          accessibilityLabel='Settings'
         >
-          <Ionicons name="settings-outline" size={24} color="#374151" />
+          <Ionicons name='settings-outline' size={24} color='#374151' />
         </TouchableOpacity>
       </View>
 
@@ -158,7 +158,7 @@ export default function Home() {
         ) : (
           <>
             <View style={styles.dashboardContainer}>
-              <ThemedText type="title" style={styles.greetingText}>
+              <ThemedText type='title' style={styles.greetingText}>
                 {getGreeting()}
               </ThemedText>
               <ThemedText style={styles.subGreetingText}>
@@ -218,7 +218,7 @@ export default function Home() {
         style={styles.addButtonBottom}
         onPress={() => setModalVisible(true)}
       >
-        <Ionicons name="add" size={24} color="#fff" />
+        <Ionicons name='add' size={24} color='#fff' />
         <Text style={styles.addButtonText}>Add Task</Text>
       </TouchableOpacity>
 
