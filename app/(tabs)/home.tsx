@@ -43,7 +43,7 @@ const getGreeting = () => {
   return 'Good evening!';
 };
 
-export default function Resupply() {
+export default function Home() {
   const router = useRouter();
   const { tasks, loading, error, refetch } = useTasks();
   const { addTask } = useAddTask(refetch);
@@ -60,12 +60,11 @@ export default function Resupply() {
     try {
       await addTask({
         taskName,
-        dueDate, // ✅ Already ISO formatted from AddTaskModal
+        dueDate, // already ISO formatted from AddTaskModal
         shouldRepeat: isRepeating,
         repeatIn: repeatDays ?? undefined,
         type: taskType,
       });
-
       setModalVisible(false);
     } catch (err) {
       console.error('Error adding task:', err);
@@ -158,6 +157,55 @@ export default function Resupply() {
           <Text style={{ color: 'red', textAlign: 'center' }}>{error}</Text>
         ) : (
           <>
+            <View style={styles.dashboardContainer}>
+              <ThemedText type="title" style={styles.greetingText}>
+                {getGreeting()}
+              </ThemedText>
+              <ThemedText style={styles.subGreetingText}>
+                Here’s your summary for today.
+              </ThemedText>
+
+              <View style={styles.statsRow}>
+                <View style={styles.statCard}>
+                  <ThemedText style={styles.statNumber}>
+                    {week.length}
+                  </ThemedText>
+                  <ThemedText style={styles.statLabel}>
+                    Due this week
+                  </ThemedText>
+                </View>
+                <View style={styles.statCard}>
+                  <ThemedText
+                    style={[
+                      styles.statNumber,
+                      overdueCount > 0 && styles.overdueText,
+                    ]}
+                  >
+                    {overdueCount}
+                  </ThemedText>
+                  <ThemedText style={styles.statLabel}>Overdue</ThemedText>
+                </View>
+              </View>
+
+              <ThemedText style={styles.progressLabel}>
+                Monthly Progress: {completed.length} / {tasks.length} tasks
+              </ThemedText>
+              <View style={styles.progressContainer}>
+                <View
+                  style={[
+                    styles.progressBar,
+                    {
+                      width: `${
+                        tasks.length > 0
+                          ? (completed.length / tasks.length) * 100
+                          : 0
+                      }%`,
+                    },
+                  ]}
+                />
+              </View>
+            </View>
+
             {renderSection('Due Today', today)}
             {renderSection('Due This Week', week)}
             {renderSection('Due This Month', month)}

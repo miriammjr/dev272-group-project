@@ -19,7 +19,7 @@ interface AddTaskModalProps {
     dueDate: string,
     isRepeating: boolean,
     repeatDays: number | null,
-    taskType: 'chore' | 'supply'
+    taskType: 'chore' | 'supply',
   ) => void;
 }
 
@@ -46,7 +46,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
   useEffect(() => {
     if (visible) {
       const now = new Date();
-     Date(formatDate(now));
+      Date(formatDate(now));
     }
   }, [visible]);
 
@@ -68,7 +68,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
       isoDueDate,
       isRepeating,
       isRepeating ? parseInt(repeatDays, 10) : null,
-      taskType
+      taskType,
     );
 
     setTaskName('');
@@ -83,7 +83,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
   return (
     <Modal
       visible={visible}
-      animationType="fade"
+      animationType='fade'
       transparent
       onRequestClose={onClose}
     >
@@ -93,8 +93,8 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
 
           <TextInput
             style={styles.input}
-            placeholder="Task Name (e.g., Buy milk)"
-            placeholderTextColor="#9CA3AF"
+            placeholder='Task Name (e.g., Buy milk)'
+            placeholderTextColor='#9CA3AF'
             value={taskName}
             onChangeText={setTaskName}
           />
@@ -102,8 +102,8 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
           {Platform.OS === 'web' ? (
             <TextInput
               style={styles.input}
-              placeholder="Due Date (MM-DD-YYYY)"
-              placeholderTextColor="#9CA3AF"
+              placeholder='Due Date (MM-DD-YYYY)'
+              placeholderTextColor='#9CA3AF'
               value={dueDate}
               onChangeText={setDueDate}
             />
@@ -120,8 +120,8 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
               {showPicker && (
                 <DateTimePicker
                   value={date}
-                  mode="date"
-                  display="default"
+                  mode='date'
+                  display='default'
                   onChange={handleDateChange}
                 />
               )}
@@ -176,11 +176,11 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
           {isRepeating && (
             <TextInput
               style={styles.input}
-              placeholder="Repeat every X days"
-              placeholderTextColor="#9CA3AF"
+              placeholder='Repeat every X days'
+              placeholderTextColor='#9CA3AF'
               value={repeatDays}
               onChangeText={setRepeatDays}
-              keyboardType="numeric"
+              keyboardType='numeric'
             />
           )}
 
