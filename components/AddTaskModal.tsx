@@ -1,7 +1,14 @@
 // components/AddTaskModal.tsx
 
 import React, { useState } from 'react';
-import { Modal, Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native';
+import {
+  Modal,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+} from 'react-native';
 
 interface AddTaskModalProps {
   visible: boolean;
@@ -9,7 +16,11 @@ interface AddTaskModalProps {
   onAddTask: (taskName: string, dueDate: string) => void;
 }
 
-const AddTaskModal: React.FC<AddTaskModalProps> = ({ visible, onClose, onAddTask }) => {
+const AddTaskModal: React.FC<AddTaskModalProps> = ({
+  visible,
+  onClose,
+  onAddTask,
+}) => {
   const [taskName, setTaskName] = useState('');
   const [dueDate, setDueDate] = useState('');
 
@@ -21,29 +32,40 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ visible, onClose, onAddTask
   };
 
   return (
-    <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      animationType='fade'
+      transparent
+      onRequestClose={onClose}
+    >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Add New Task</Text>
           <TextInput
             style={styles.input}
-            placeholder="Task Name (e.g., Buy milk)"
-            placeholderTextColor="#9CA3AF"
+            placeholder='Task Name (e.g., Buy milk)'
+            placeholderTextColor='#9CA3AF'
             value={taskName}
             onChangeText={setTaskName}
           />
           <TextInput
             style={styles.input}
-            placeholder="Due Date (YYYY-MM-DD)"
-            placeholderTextColor="#9CA3AF"
+            placeholder='Due Date (YYYY-MM-DD)'
+            placeholderTextColor='#9CA3AF'
             value={dueDate}
             onChangeText={setDueDate}
           />
           <View style={styles.modalButtons}>
-            <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={onClose}>
+            <TouchableOpacity
+              style={[styles.modalButton, styles.cancelButton]}
+              onPress={onClose}
+            >
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.modalButton, styles.addButton]} onPress={handleSubmit}>
+            <TouchableOpacity
+              style={[styles.modalButton, styles.addButton]}
+              onPress={handleSubmit}
+            >
               <Text style={styles.addButtonModalText}>Add Task</Text>
             </TouchableOpacity>
           </View>

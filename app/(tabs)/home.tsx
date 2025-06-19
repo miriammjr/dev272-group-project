@@ -98,7 +98,8 @@ export default function Resupply() {
     };
   };
 
-  const { today, week, month, completed, overdueCount } = categorizeTasks(tasks);
+  const { today, week, month, completed, overdueCount } =
+    categorizeTasks(tasks);
 
   const renderSection = (
     title: 'Due Today' | 'Due This Week' | 'Due This Month' | 'Completed',
@@ -106,7 +107,7 @@ export default function Resupply() {
   ) => (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <ThemedText type="subtitle">{title}</ThemedText>
+        <ThemedText type='subtitle'>{title}</ThemedText>
         <View style={styles.taskCountBadge}>
           <Text style={styles.taskCountText}>{tasksToRender.length}</Text>
         </View>
@@ -130,12 +131,12 @@ export default function Resupply() {
   return (
     <View style={styles.container}>
       <View style={styles.topHeader}>
-        <ThemedText type="title">🏡 Resupply</ThemedText>
+        <ThemedText type='title'>🏡 Resupply</ThemedText>
         <TouchableOpacity
           onPress={() => router.push('/settings')}
-          accessibilityLabel="Settings"
+          accessibilityLabel='Settings'
         >
-          <Ionicons name="settings-outline" size={24} color="#374151" />
+          <Ionicons name='settings-outline' size={24} color='#374151' />
         </TouchableOpacity>
       </View>
 
@@ -147,7 +148,7 @@ export default function Resupply() {
         ) : (
           <>
             <View style={styles.dashboardContainer}>
-              <ThemedText type="title" style={styles.greetingText}>
+              <ThemedText type='title' style={styles.greetingText}>
                 {getGreeting()}
               </ThemedText>
               <ThemedText style={styles.subGreetingText}>
@@ -155,8 +156,12 @@ export default function Resupply() {
               </ThemedText>
               <View style={styles.statsRow}>
                 <View style={styles.statCard}>
-                  <ThemedText style={styles.statNumber}>{week.length}</ThemedText>
-                  <ThemedText style={styles.statLabel}>Due this week</ThemedText>
+                  <ThemedText style={styles.statNumber}>
+                    {week.length}
+                  </ThemedText>
+                  <ThemedText style={styles.statLabel}>
+                    Due this week
+                  </ThemedText>
                 </View>
                 <View style={styles.statCard}>
                   <ThemedText
@@ -201,7 +206,7 @@ export default function Resupply() {
         style={styles.addButtonBottom}
         onPress={() => setModalVisible(true)}
       >
-        <Ionicons name="add" size={24} color="#fff" />
+        <Ionicons name='add' size={24} color='#fff' />
         <Text style={styles.addButtonText}>Add Task</Text>
       </TouchableOpacity>
 
