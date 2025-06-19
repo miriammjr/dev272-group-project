@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../utils/supabase';
 
-export function useAddTask() {
+export function useAddTask(refetch?: () => Promise<any>) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [newTask, setNewTask] = useState<any>(null);
@@ -26,7 +26,7 @@ export function useAddTask() {
       .insert([
         {
           ...taskData,
-          idUserAccount: user.id, // Attach user ID here
+          idUserAccount: user.id,
         },
       ])
       .select()
@@ -37,6 +37,9 @@ export function useAddTask() {
       setNewTask(null);
     } else {
       setNewTask(data);
+      if (refetch) {
+        await refetch(); // ✅ Trigger task list refresh
+      }
     }
 
     setLoading(false);
