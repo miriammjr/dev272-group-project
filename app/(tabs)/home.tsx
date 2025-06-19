@@ -33,6 +33,7 @@ interface Task {
   lastCompletedAt?: string | null;
   shouldRepeat?: boolean;
   repeatIn?: number;
+  type?: string;
 }
 
 const getGreeting = () => {
@@ -49,12 +50,22 @@ export default function Resupply() {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleAddTask = async (taskName: string, dueDate: string) => {
+  const handleAddTask = async (
+    taskName: string,
+    dueDate: string,
+    isRepeating: boolean,
+    repeatDays: number | null,
+    taskType: string
+  ) => {
     try {
-      const localDate = new Date(`${dueDate}T00:00:00`);
-      const offsetMinutes = localDate.getTimezoneOffset();
-      const utcDate = new Date(localDate.getTime() - offsetMinutes * 60000);
-      await addTask({ taskName, dueDate: utcDate.toISOString() });
+      await addTask({
+        taskName,
+        dueDate, // ✅ Already ISO formatted from AddTaskModal
+        shouldRepeat: isRepeating,
+        repeatIn: repeatDays ?? undefined,
+        type: taskType,
+      });
+
       setModalVisible(false);
     } catch (err) {
       console.error('Error adding task:', err);
@@ -103,11 +114,11 @@ export default function Resupply() {
 
   const renderSection = (
     title: 'Due Today' | 'Due This Week' | 'Due This Month' | 'Completed',
-    tasksToRender: Task[],
+    tasksToRender: Task[]
   ) => (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <ThemedText type='subtitle'>{title}</ThemedText>
+        <ThemedText type="subtitle">{title}</ThemedText>
         <View style={styles.taskCountBadge}>
           <Text style={styles.taskCountText}>{tasksToRender.length}</Text>
         </View>
@@ -131,12 +142,12 @@ export default function Resupply() {
   return (
     <View style={styles.container}>
       <View style={styles.topHeader}>
-        <ThemedText type='title'>🏡 Resupply</ThemedText>
+        <ThemedText type="title">🏡 Resupply</ThemedText>
         <TouchableOpacity
           onPress={() => router.push('/settings')}
-          accessibilityLabel='Settings'
+          accessibilityLabel="Settings"
         >
-          <Ionicons name='settings-outline' size={24} color='#374151' />
+          <Ionicons name="settings-outline" size={24} color="#374151" />
         </TouchableOpacity>
       </View>
 
@@ -147,53 +158,6 @@ export default function Resupply() {
           <Text style={{ color: 'red', textAlign: 'center' }}>{error}</Text>
         ) : (
           <>
-            <View style={styles.dashboardContainer}>
-              <ThemedText type='title' style={styles.greetingText}>
-                {getGreeting()}
-              </ThemedText>
-              <ThemedText style={styles.subGreetingText}>
-                Here’s your summary for today.
-              </ThemedText>
-              <View style={styles.statsRow}>
-                <View style={styles.statCard}>
-                  <ThemedText style={styles.statNumber}>
-                    {week.length}
-                  </ThemedText>
-                  <ThemedText style={styles.statLabel}>
-                    Due this week
-                  </ThemedText>
-                </View>
-                <View style={styles.statCard}>
-                  <ThemedText
-                    style={[
-                      styles.statNumber,
-                      overdueCount > 0 && styles.overdueText,
-                    ]}
-                  >
-                    {overdueCount}
-                  </ThemedText>
-                  <ThemedText style={styles.statLabel}>Overdue</ThemedText>
-                </View>
-              </View>
-              <ThemedText style={styles.progressLabel}>
-                Monthly Progress: {completed.length} / {tasks.length} tasks
-              </ThemedText>
-              <View style={styles.progressContainer}>
-                <View
-                  style={[
-                    styles.progressBar,
-                    {
-                      width: `${
-                        tasks.length > 0
-                          ? (completed.length / tasks.length) * 100
-                          : 0
-                      }%`,
-                    },
-                  ]}
-                />
-              </View>
-            </View>
-
             {renderSection('Due Today', today)}
             {renderSection('Due This Week', week)}
             {renderSection('Due This Month', month)}
@@ -206,7 +170,7 @@ export default function Resupply() {
         style={styles.addButtonBottom}
         onPress={() => setModalVisible(true)}
       >
-        <Ionicons name='add' size={24} color='#fff' />
+        <Ionicons name="add" size={24} color="#fff" />
         <Text style={styles.addButtonText}>Add Task</Text>
       </TouchableOpacity>
 
