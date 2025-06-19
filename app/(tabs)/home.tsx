@@ -33,6 +33,7 @@ interface Task {
   lastCompletedAt?: string | null;
   shouldRepeat?: boolean;
   repeatIn?: number;
+  type?: string;
 }
 
 const getGreeting = () => {
@@ -42,19 +43,28 @@ const getGreeting = () => {
   return 'Good evening!';
 };
 
-export default function Resupply() {
+export default function Home() {
   const router = useRouter();
   const { tasks, loading, error, refetch } = useTasks();
   const { addTask } = useAddTask(refetch);
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleAddTask = async (taskName: string, dueDate: string) => {
+  const handleAddTask = async (
+    taskName: string,
+    dueDate: string,
+    isRepeating: boolean,
+    repeatDays: number | null,
+    taskType: string,
+  ) => {
     try {
-      const localDate = new Date(`${dueDate}T00:00:00`);
-      const offsetMinutes = localDate.getTimezoneOffset();
-      const utcDate = new Date(localDate.getTime() - offsetMinutes * 60000);
-      await addTask({ taskName, dueDate: utcDate.toISOString() });
+      await addTask({
+        taskName,
+        dueDate, // already ISO formatted from AddTaskModal
+        shouldRepeat: isRepeating,
+        repeatIn: repeatDays ?? undefined,
+        type: taskType,
+      });
       setModalVisible(false);
     } catch (err) {
       console.error('Error adding task:', err);
@@ -154,6 +164,7 @@ export default function Resupply() {
               <ThemedText style={styles.subGreetingText}>
                 Here’s your summary for today.
               </ThemedText>
+
               <View style={styles.statsRow}>
                 <View style={styles.statCard}>
                   <ThemedText style={styles.statNumber}>
@@ -175,6 +186,7 @@ export default function Resupply() {
                   <ThemedText style={styles.statLabel}>Overdue</ThemedText>
                 </View>
               </View>
+
               <ThemedText style={styles.progressLabel}>
                 Monthly Progress: {completed.length} / {tasks.length} tasks
               </ThemedText>
