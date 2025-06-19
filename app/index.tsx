@@ -1,7 +1,6 @@
 import { Session } from '@supabase/supabase-js';
-import { useEffect, useState } from 'react';
-// import 'react-native-url-polyfill/auto';
 import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { supabase } from '../utils/supabase';
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);

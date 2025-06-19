@@ -10,9 +10,25 @@ export function useAddTask() {
     setLoading(true);
     setError(null);
 
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      setError('User not authenticated');
+      setLoading(false);
+      return { data: null, error: userError };
+    }
+
     const { data, error } = await supabase
       .from('TaskList')
-      .insert([taskData])
+      .insert([
+        {
+          ...taskData,
+          idUserAccount: user.id, // Attach user ID here
+        },
+      ])
       .select()
       .single();
 

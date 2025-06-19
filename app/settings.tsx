@@ -1,123 +1,195 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
-  Button,
   Platform,
+  Pressable,
   StyleSheet,
   Switch,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import * as Notifications from 'expo-notifications';
+import { router } from 'expo-router';
+import { supabase } from '@/utils/supabase';
 
 export default function SettingsScreen() {
-  const [notificationTime, setNotificationTime] = useState(new Date());
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [homeName, setHomeName] = useState('');
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [reminderTime, setReminderTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-  const [householdName, setHouseholdName] = useState('');
 
   useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const storedTime = await AsyncStorage.getItem('notificationTime');
-        const storedTheme = await AsyncStorage.getItem('darkMode');
-        const storedName = await AsyncStorage.getItem('householdName');
-        if (storedTime) setNotificationTime(new Date(storedTime));
-        if (storedTheme) setDarkMode(storedTheme === 'true');
-        if (storedName) setHouseholdName(storedName);
-      } catch (e) {
-        console.error('Error loading settings:', e);
-      }
+    const loadData = async () => {
+      const storedEmail = await AsyncStorage.getItem('email');
+      const storedPassword = await AsyncStorage.getItem('password');
+      const storedHomeName = await AsyncStorage.getItem('homeName');
+      const notif = await AsyncStorage.getItem('notifications');
+      const storedTime = await AsyncStorage.getItem('reminderTime');
+
+      if (storedEmail) setEmail(storedEmail);
+      if (storedPassword) setPassword(storedPassword);
+      if (storedHomeName) setHomeName(storedHomeName);
+      if (notif === 'true') setNotificationsEnabled(true);
+      if (storedTime) setReminderTime(new Date(storedTime));
     };
-    loadSettings();
+
+    loadData();
+    if (Platform.OS !== 'web') {
+      Notifications.requestPermissionsAsync();
+    }
   }, []);
 
-  const saveNotificationTime = async (time: Date) => {
-    setNotificationTime(time);
-    await AsyncStorage.setItem('notificationTime', time.toISOString());
-  };
+  const scheduleDailyNotification = async (time: Date) => {
+    if (Platform.OS === 'web') return;
 
-  const toggleTheme = async () => {
-    const newValue = !darkMode;
-    setDarkMode(newValue);
-    await AsyncStorage.setItem('darkMode', newValue.toString());
-  };
+    await Notifications.cancelAllScheduledNotificationsAsync();
 
-  const saveHouseholdName = async () => {
-    await AsyncStorage.setItem('householdName', householdName);
-    Alert.alert('Saved', 'Household name updated.');
-  };
+    const hour = time.getHours();
+    const minute = time.getMinutes();
 
-  const resetAllData = () => {
-    Alert.alert('Reset App', 'Are you sure you want to delete all data?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Reset',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await AsyncStorage.clear();
-            Alert.alert('Reset Complete', 'All data cleared.');
-          } catch {
-            Alert.alert('Error', 'Failed to reset data.');
-          }
-        },
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Reminder',
+        body: "Don't forget to check your household tasks today!",
+        sound: 'default',
       },
-    ]);
+      trigger: {
+        hour,
+        minute,
+        repeats: true,
+      },
+    });
+  };
+
+  const saveSettings = async () => {
+    await AsyncStorage.setItem('email', email);
+    await AsyncStorage.setItem('password', password);
+    await AsyncStorage.setItem('homeName', homeName);
+    await AsyncStorage.setItem(
+      'notifications',
+      notificationsEnabled.toString(),
+    );
+    await AsyncStorage.setItem('reminderTime', reminderTime.toISOString());
+
+    if (Platform.OS !== 'web') {
+      if (notificationsEnabled) {
+        await scheduleDailyNotification(reminderTime);
+      } else {
+        await Notifications.cancelAllScheduledNotificationsAsync();
+      }
+    }
+
+    Alert.alert('Saved!', 'Your settings were saved.');
+  };
+
+  const logoutUser = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      await AsyncStorage.multiRemove([
+        'email',
+        'password',
+        'homeName',
+        'reminderTime',
+      ]);
+
+      if (Platform.OS !== 'web') {
+        await Notifications.cancelAllScheduledNotificationsAsync();
+      }
+
+      Alert.alert('Logged Out', 'You have been logged out.');
+      router.replace('/');
+    } catch (e) {
+      console.error('Logout error:', e);
+      Alert.alert('Error', 'Failed to log out.');
+    }
+  };
+
+  const onTimeChange = (event: any, selectedTime?: Date) => {
+    setShowTimePicker(false);
+    if (selectedTime) setReminderTime(selectedTime);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>⚙️ Settings</Text>
+      <Text style={styles.title}>Settings</Text>
 
-      {/* 1. Notification Time */}
-      <View style={styles.section}>
-        <Text style={styles.label}>⏰ Daily Reminder Time</Text>
-        <Button
-          title={`Set Time (${notificationTime.toLocaleTimeString()})`}
-          onPress={() => setShowTimePicker(true)}
+      <View style={styles.card}>
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          placeholder='Enter your email'
+          placeholderTextColor='#aaa'
         />
+
+        <Text style={styles.label}>Password</Text>
+        <TextInput
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+          placeholder='Enter your password'
+          secureTextEntry
+          placeholderTextColor='#aaa'
+        />
+
+        <Text style={styles.label}>Home Name</Text>
+        <TextInput
+          style={styles.input}
+          value={homeName}
+          onChangeText={setHomeName}
+          placeholder='Name your home'
+          placeholderTextColor='#aaa'
+        />
+
+        <View style={styles.switchRow}>
+          <Text style={styles.label}>Enable Notifications</Text>
+          <Switch
+            value={notificationsEnabled}
+            onValueChange={setNotificationsEnabled}
+            thumbColor={Platform.OS === 'android' ? '#fff' : undefined}
+            trackColor={{ true: '#007AFF', false: '#ccc' }}
+          />
+        </View>
+
+        <Text style={styles.label}>Reminder Time</Text>
+        <Pressable
+          style={styles.timeBox}
+          onPress={() => setShowTimePicker(true)}
+        >
+          <Text style={styles.timeText}>
+            {reminderTime.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </Text>
+        </Pressable>
+
         {showTimePicker && (
           <DateTimePicker
-            value={notificationTime}
             mode='time'
-            is24Hour={false}
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={(e, selectedTime) => {
-              if (selectedTime) saveNotificationTime(selectedTime);
-              setShowTimePicker(false);
-            }}
+            value={reminderTime}
+            is24Hour={true}
+            display='default'
+            onChange={onTimeChange}
           />
         )}
-      </View>
 
-      {/* 2. Theme Toggle */}
-      <View style={styles.section}>
-        <Text style={styles.label}>🎨 Dark Mode</Text>
-        <Switch value={darkMode} onValueChange={toggleTheme} />
-      </View>
+        <TouchableOpacity style={styles.saveButton} onPress={saveSettings}>
+          <Text style={styles.saveButtonText}>Save Settings</Text>
+        </TouchableOpacity>
 
-      {/* 3. Household Name */}
-      <View style={styles.section}>
-        <Text style={styles.label}>👤 Household Name</Text>
-        <TextInput
-          value={householdName}
-          onChangeText={setHouseholdName}
-          placeholder='e.g., Smith Family'
-          style={styles.input}
-        />
-        <Button title='Save Name' onPress={saveHouseholdName} />
-      </View>
-
-      {/* Reset */}
-      <View style={styles.section}>
-        <Button
-          title='Reset All App Data'
-          color='#FF3B30'
-          onPress={resetAllData}
-        />
+        <TouchableOpacity style={styles.logoutButton} onPress={logoutUser}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -125,28 +197,79 @@ export default function SettingsScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 24,
-    backgroundColor: '#f9f9f9',
+    flex: 1,
+    backgroundColor: '#f9fafb',
   },
   title: {
-    fontSize: 26,
-    fontWeight: 'bold',
+    fontSize: 28,
+    fontWeight: '600',
     marginBottom: 24,
+    color: '#111827',
   },
-  section: {
-    marginBottom: 24,
+  card: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 16,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
   },
   label: {
     fontSize: 16,
-    marginBottom: 8,
+    fontWeight: '500',
+    color: '#374151',
+    marginBottom: 6,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    borderRadius: 6,
-    marginBottom: 8,
-    backgroundColor: '#fff',
+    borderColor: '#d1d5db',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 16,
+    backgroundColor: '#f9fafb',
+    fontSize: 16,
+  },
+  switchRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  timeBox: {
+    padding: 12,
+    backgroundColor: '#f3f4f6',
+    borderRadius: 10,
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  timeText: {
+    fontSize: 16,
+    color: '#111827',
+  },
+  saveButton: {
+    backgroundColor: '#2563EB',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  saveButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  logoutButton: {
+    backgroundColor: '#ef4444',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  logoutButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

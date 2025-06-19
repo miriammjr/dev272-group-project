@@ -1,5 +1,5 @@
-# Run Expo lint
-# expo lint
+# Format code with Prettier
+npx prettier --write .
 
-# Run Prettier check
-npx prettier --write . --fix
+# Lint and fix issues with ESLint
+npx eslint . --fix
