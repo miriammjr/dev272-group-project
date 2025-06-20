@@ -44,11 +44,7 @@ export default function TaskCardToggle({
       return;
     }
 
-    if (
-      newCompletedState &&
-      task.shouldRepeat &&
-      task.repeatIn > 0
-    ) {
+    if (newCompletedState && task.shouldRepeat && task.repeatIn > 0) {
       const {
         data: { user },
         error: authError,
@@ -70,22 +66,27 @@ export default function TaskCardToggle({
         } else if (!existingTasks || existingTasks.length === 0) {
           const completionDate = new Date();
           const previousDueDate = new Date(task.dueDate);
-          const actualInterval = Math.max(1, differenceInDays(completionDate, previousDueDate));
+          const actualInterval = Math.max(
+            1,
+            differenceInDays(completionDate, previousDueDate),
+          );
           const newRepeatIn = Math.round((actualInterval + task.repeatIn) / 2);
           const nextDueDate = getNextDueDate(newRepeatIn);
 
-          const { error: insertError } = await supabase.from('TaskList').insert([
-            {
-              taskName: task.taskName,
-              completed: false,
-              dueDate: nextDueDate.toISOString(),
-              shouldRepeat: true,
-              repeatIn: newRepeatIn,
-              idUserAccount: user.id,
-              createdDate: new Date().toISOString(),
-              type: task.type ?? 'chore',
-            },
-          ]);
+          const { error: insertError } = await supabase
+            .from('TaskList')
+            .insert([
+              {
+                taskName: task.taskName,
+                completed: false,
+                dueDate: nextDueDate.toISOString(),
+                shouldRepeat: true,
+                repeatIn: newRepeatIn,
+                idUserAccount: user.id,
+                createdDate: new Date().toISOString(),
+                type: task.type ?? 'chore',
+              },
+            ]);
 
           if (insertError) {
             console.error('Failed to create repeated task:', {
@@ -137,7 +138,7 @@ export default function TaskCardToggle({
           title={task.completed ? 'Undo' : 'Complete'}
           onPress={handleToggle}
         />
-        <Button title="Delete" color="red" onPress={handleDelete} />
+        <Button title='Delete' color='red' onPress={handleDelete} />
       </View>
     </View>
   );
