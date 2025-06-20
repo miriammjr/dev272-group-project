@@ -15,7 +15,6 @@ import {
   parseISO,
   startOfToday,
 } from 'date-fns';
-import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 
 import TaskCardToggle from '@/components/TaskCardToggle';
