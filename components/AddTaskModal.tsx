@@ -10,6 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { validateTaskInput, TaskValidationErrors } from '../utils/validation';
 
 interface AddTaskModalProps {
   visible: boolean;
@@ -34,6 +35,10 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
   const [isRepeating, setIsRepeating] = useState(false);
   const [repeatDays, setRepeatDays] = useState('');
   const [taskType, setTaskType] = useState<'chore' | 'supply'>('chore');
+  const [errors, setErrors] = useState<TaskValidationErrors>({ taskName: '', repeatDays: '' });
+const [dateInput, setDateInput] = useState('');
+const [dateError, setDateError] = useState('');
+
 
   const formatDate = (date: Date) => {
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -42,12 +47,14 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
     return `${month}-${day}-${year}`;
   };
 
-  useEffect(() => {
-    if (visible) {
-      const now = new Date();
-      setDate(now);
-    }
-  }, [visible]);
+useEffect(() => {
+  if (visible) {
+    const now = new Date();
+    setDate(now);
+    setDateInput(formatDate(now));
+    setDateError('');
+  }
+}, [visible]);
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
     setShowPicker(false);
@@ -56,27 +63,32 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
     }
   };
 
-const handleSubmit = () => {
-  if (!taskName || !taskType) return;
+  const handleSubmit = () => {
+    const validationErrors = validateTaskInput(taskName, isRepeating, repeatDays);
+    const hasError = Object.values(validationErrors).some(error => error !== '');
 
-  const isoDueDate = date.toISOString(); // ✅ This line was missing
-  const repeatDaysInt = parseInt(repeatDays, 10);
+    setErrors(validationErrors);
+    if (hasError) return;
 
-  onAddTask(
-    taskName,
-    isoDueDate,
-    isRepeating,
-    isRepeating ? (isNaN(repeatDaysInt) ? null : repeatDaysInt) : null,
-    taskType,
-  );
+    const isoDueDate = date.toISOString();
+    const repeatDaysInt = parseInt(repeatDays, 10);
 
-  setTaskName('');
-  setDate(new Date());
-  setIsRepeating(false);
-  setRepeatDays('');
-  setTaskType('chore');
-  onClose();
-};
+    onAddTask(
+      taskName,
+      isoDueDate,
+      isRepeating,
+      isRepeating ? repeatDaysInt : null,
+      taskType,
+    );
+
+    setTaskName('');
+    setDate(new Date());
+    setIsRepeating(false);
+    setRepeatDays('');
+    setTaskType('chore');
+    setErrors({ taskName: '', repeatDays: '' });
+    onClose();
+  };
 
   const dueDate = formatDate(date);
 
@@ -98,23 +110,40 @@ const handleSubmit = () => {
             value={taskName}
             onChangeText={setTaskName}
           />
+          {errors.taskName ? <Text style={styles.errorText}>{errors.taskName}</Text> : null}
 
           {Platform.OS === 'web' ? (
-            <TextInput
-              style={styles.input}
-              placeholder="Due Date (MM-DD-YYYY)"
-              placeholderTextColor="#9CA3AF"
-              value={dueDate}
-              editable={false}
-            />
+            <>
+              <TextInput
+                style={styles.input}
+                placeholder="Due Date (MM-DD-YYYY)"
+                placeholderTextColor="#9CA3AF"
+                value={dateInput}
+                onChangeText={(text) => {
+                  setDateInput(text);
+                  const [month, day, year] = text.split('-');
+                  const parsedDate = new Date(`${year}-${month}-${day}`);
+                  if (
+                    /^\d{2}-\d{2}-\d{4}$/.test(text) &&
+                    !isNaN(parsedDate.getTime())
+                  ) {
+                    setDate(parsedDate);
+                    setDateError('');
+                  } else {
+                    setDateError('Please enter a valid date in MM-DD-YYYY format.');
+                  }
+                }}
+              />
+              {dateError ? <Text style={styles.errorText}>{dateError}</Text> : null}
+            </>
           ) : (
             <>
               <TouchableOpacity
                 onPress={() => setShowPicker(true)}
                 style={styles.input}
               >
-                <Text style={{ color: dueDate ? '#111827' : '#9CA3AF' }}>
-                  {dueDate || 'Select Due Date'}
+                <Text style={{ color: formatDate(date) ? '#111827' : '#9CA3AF' }}>
+                  {formatDate(date) || 'Select Due Date'}
                 </Text>
               </TouchableOpacity>
               {showPicker && (
@@ -127,6 +156,7 @@ const handleSubmit = () => {
               )}
             </>
           )}
+
 
           <View style={styles.rowContainer}>
             <View style={styles.taskTypeContainer}>
@@ -161,14 +191,19 @@ const handleSubmit = () => {
           </View>
 
           {isRepeating && (
-            <TextInput
-              style={styles.input}
-              placeholder="Repeat every X days"
-              placeholderTextColor="#9CA3AF"
-              value={repeatDays}
-              onChangeText={setRepeatDays}
-              keyboardType="numeric"
-            />
+            <>
+              <TextInput
+                style={styles.input}
+                placeholder="Repeat every X days"
+                placeholderTextColor="#9CA3AF"
+                value={repeatDays}
+                onChangeText={setRepeatDays}
+                keyboardType="numeric"
+              />
+              {errors.repeatDays ? (
+                <Text style={styles.errorText}>{errors.repeatDays}</Text>
+              ) : null}
+            </>
           )}
 
           <View style={styles.modalButtons}>
@@ -192,7 +227,6 @@ const handleSubmit = () => {
 };
 
 export default AddTaskModal;
-
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -220,6 +254,11 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     backgroundColor: '#F9FAFB',
+  },
+  errorText: {
+    color: '#DC2626',
+    fontSize: 14,
+    marginTop: 4,
   },
   rowContainer: {
     flexDirection: 'row',
