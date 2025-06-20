@@ -24,7 +24,7 @@ export default function Redirect() {
 
   return (
     <View style={styles.container}>
-      <ActivityIndicator size="large" color="#10B981" />
+      <ActivityIndicator size='large' color='#10B981' />
     </View>
   );
 }

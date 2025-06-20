@@ -2,7 +2,7 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform, View } from 'react-native';
 
-import AppHeader from '@/components/AppHeader'; // ✅ Import your header
+import AppHeader from '@/components/AppHeader';
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
@@ -14,7 +14,7 @@ export default function TabLayout() {
 
   return (
     <View style={{ flex: 1 }}>
-      <AppHeader /> {/* ✅ Global header shown above all tabs */}
+      <AppHeader />
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
@@ -30,42 +30,42 @@ export default function TabLayout() {
         }}
       >
         <Tabs.Screen
-          name='home'
+          name="home"
           options={{
             title: 'Home',
             tabBarLabelPosition: 'below-icon',
             tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name='house.fill' color={color} />
+              <IconSymbol size={28} name="house.fill" color={color} />
             ),
           }}
         />
         <Tabs.Screen
-          name='calendar'
+          name="calendar"
           options={{
             title: 'Calendar',
             tabBarLabelPosition: 'below-icon',
             tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name='calendar' color={color} />
+              <IconSymbol size={28} name="calendar" color={color} />
             ),
           }}
         />
         <Tabs.Screen
-          name='forecast'
+          name="forecast"
           options={{
             title: 'Forecast',
             tabBarLabelPosition: 'below-icon',
             tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name='calendar.badge.clock' color={color} />
+              <IconSymbol size={28} name="calendar.badge.clock" color={color} />
             ),
           }}
         />
         <Tabs.Screen
-          name='shop'
+          name="shop"
           options={{
             title: 'Shop',
             tabBarLabelPosition: 'below-icon',
             tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name='cart' color={color} />
+              <IconSymbol size={28} name="cart" color={color} />
             ),
           }}
         />
