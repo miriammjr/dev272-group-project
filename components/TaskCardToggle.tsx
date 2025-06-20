@@ -29,38 +29,52 @@ export default function TaskCardToggle({
   };
 
   const handleToggle = async () => {
-    const { error } = await supabase
+    const { error: updateError } = await supabase
       .from('TaskList')
       .update({ completed: !task.completed })
       .eq('id', task.id);
 
-    if (error) {
+    if (updateError) {
       Alert.alert('Error', 'Failed to update task status.');
-      console.error('Toggle error:', error);
-    } else {
-      if (!task.completed && task.shouldRepeat && task.repeatIn > 0) {
-        const nextDueDate = getNextDueDate(
-          new Date(task.dueDate),
-          task.repeatIn,
-        );
+      console.error('Toggle error:', updateError);
+      return;
+    }
 
-        const { error: insertError } = await supabase.from('TaskList').insert([
-          {
-            taskName: task.taskName,
-            completed: false,
-            dueDate: nextDueDate.toISOString(),
-            shouldRepeat: true,
-            repeatIn: task.repeatIn,
-          },
-        ]);
+    if (!task.completed && task.shouldRepeat && task.repeatIn > 0) {
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
 
-        if (insertError) {
-          console.error('Failed to create repeated task:', insertError);
-        }
+      if (authError || !user) {
+        console.error('User not authenticated:', authError);
+        return;
       }
 
-      onStatusChange(); // Refresh task list
+      const nextDueDate = getNextDueDate(new Date(task.dueDate), task.repeatIn);
+
+      const { error: insertError } = await supabase.from('TaskList').insert([
+        {
+          taskName: task.taskName,
+          completed: false,
+          dueDate: nextDueDate.toISOString(),
+          shouldRepeat: true,
+          repeatIn: task.repeatIn,
+          idUserAccount: user.id, // ✅ Required for RLS
+        },
+      ]);
+
+      if (insertError) {
+        console.error('Failed to create repeated task:', {
+          message: insertError.message,
+          details: insertError.details,
+          hint: insertError.hint,
+          code: insertError.code,
+        });
+      }
     }
+
+    onStatusChange(); // Refresh task list
   };
 
   const handleDelete = async () => {
@@ -95,7 +109,7 @@ export default function TaskCardToggle({
           title={task.completed ? 'Undo' : 'Complete'}
           onPress={handleToggle}
         />
-        <Button title='Delete' color='red' onPress={handleDelete} />
+        <Button title="Delete" color="red" onPress={handleDelete} />
       </View>
     </View>
   );
@@ -103,19 +117,20 @@ export default function TaskCardToggle({
 
 const styles = StyleSheet.create({
   card: {
-    padding: 12,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#fff',
+    padding: 16,
+    marginVertical: 8,
     borderRadius: 8,
-    marginBottom: 8,
+    elevation: 2,
   },
   taskName: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: 'bold',
   },
   dueDate: {
     fontSize: 14,
-    color: '#555',
-    marginTop: 4,
+    color: '#666',
+    marginVertical: 4,
   },
   actions: {
     flexDirection: 'row',
