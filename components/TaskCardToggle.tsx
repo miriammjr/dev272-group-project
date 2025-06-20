@@ -7,9 +7,9 @@ type Task = {
   id: number;
   taskName: string;
   completed: boolean;
-  dueDate: string; // ISO string
+  dueDate: string;
   shouldRepeat: boolean;
-  repeatIn: number; // Number of days
+  repeatIn: number;
   type?: string;
 };
 
@@ -102,31 +102,12 @@ export default function TaskCardToggle({
       }
     }
 
-    // ✅ Always refresh the task list
     onStatusChange();
   };
 
-  const handleDelete = async () => {
-    Alert.alert('Delete Task', 'Are you sure you want to delete this task?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          const { error } = await supabase
-            .from('TaskList')
-            .delete()
-            .eq('id', task.id);
-
-          if (error) {
-            Alert.alert('Error', 'Failed to delete task.');
-            console.error('Delete error:', error);
-          } else {
-            onDelete(task.id);
-          }
-        },
-      },
-    ]);
+  const handleDelete = () => {
+    console.log('Delete button pressed for task ID:', task.id);
+    onDelete(task.id);
   };
 
   return (
