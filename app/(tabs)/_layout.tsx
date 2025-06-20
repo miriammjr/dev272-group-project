@@ -2,12 +2,12 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform, View } from 'react-native';
 
+import AppHeader from '@/components/AppHeader'; // ✅ Import your header
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import AppHeader from '@/components/AppHeader'; // ✅ Import your header
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -65,7 +65,7 @@ export default function TabLayout() {
             title: 'Shop',
             tabBarLabelPosition: 'below-icon',
             tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name='cart.fill' color={color} />
+              <IconSymbol size={28} name='cart' color={color} />
             ),
           }}
         />
