@@ -52,7 +52,7 @@ export default function Home() {
     dueDate: string,
     isRepeating: boolean,
     repeatDays: number | null,
-    taskType: string,
+    taskType: string
   ) => {
     try {
       await addTask({
@@ -74,6 +74,7 @@ export default function Home() {
     const month: Task[] = [];
     const completed: Task[] = [];
     const overdue: Task[] = [];
+
     const now = new Date();
     const todayStart = startOfToday();
 
@@ -81,10 +82,12 @@ export default function Home() {
       if (task.completed) return completed.push(task);
 
       const due = parseISO(task.dueDate);
+
       if (task.frequency && task.lastCompletedAt) {
         const lastDone = parseISO(task.lastCompletedAt);
-        if (differenceInDays(now, lastDone) >= task.frequency)
+        if (differenceInDays(now, lastDone) >= task.frequency) {
           return today.push(task);
+        }
       }
 
       if (isBefore(due, todayStart)) return overdue.push(task);
@@ -105,16 +108,15 @@ export default function Home() {
     };
   };
 
-  const { today, week, month, completed, overdueCount } =
-    categorizeTasks(tasks);
+  const { today, week, month, completed, overdueCount } = categorizeTasks(tasks);
 
   const renderSection = (
-    title: 'Due Today' | 'Due This Week' | 'Due This Month' | 'Completed',
-    tasksToRender: Task[],
+    title: string,
+    tasksToRender: Task[]
   ) => (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <ThemedText type='subtitle'>{title}</ThemedText>
+        <ThemedText type="subtitle">{title}</ThemedText>
         <View style={styles.taskCountBadge}>
           <Text style={styles.taskCountText}>{tasksToRender.length}</Text>
         </View>
@@ -145,7 +147,7 @@ export default function Home() {
         ) : (
           <>
             <View style={styles.dashboardContainer}>
-              <ThemedText type='title' style={styles.greetingText}>
+              <ThemedText type="title" style={styles.greetingText}>
                 {getGreeting()}
               </ThemedText>
               <ThemedText style={styles.subGreetingText}>
@@ -154,12 +156,8 @@ export default function Home() {
 
               <View style={styles.statsRow}>
                 <View style={styles.statCard}>
-                  <ThemedText style={styles.statNumber}>
-                    {week.length}
-                  </ThemedText>
-                  <ThemedText style={styles.statLabel}>
-                    Due this week
-                  </ThemedText>
+                  <ThemedText style={styles.statNumber}>{week.length}</ThemedText>
+                  <ThemedText style={styles.statLabel}>Due this week</ThemedText>
                 </View>
                 <View style={styles.statCard}>
                   <ThemedText
@@ -182,11 +180,9 @@ export default function Home() {
                   style={[
                     styles.progressBar,
                     {
-                      width: `${
-                        tasks.length > 0
-                          ? (completed.length / tasks.length) * 100
-                          : 0
-                      }%`,
+                      width: `${tasks.length > 0
+                        ? (completed.length / tasks.length) * 100
+                        : 0}%`,
                     },
                   ]}
                 />
@@ -205,7 +201,7 @@ export default function Home() {
         style={styles.addButtonBottom}
         onPress={() => setModalVisible(true)}
       >
-        <Ionicons name='add' size={24} color='#fff' />
+        <Ionicons name="add" size={24} color="#fff" />
         <Text style={styles.addButtonText}>Add Task</Text>
       </TouchableOpacity>
 

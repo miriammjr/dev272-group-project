@@ -21,7 +21,6 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  // --- AUTHENTICATION FUNCTIONS ---
   async function signInWithEmail() {
     if (!email || !password) {
       Alert.alert('Please enter both email and password.');
@@ -83,17 +82,17 @@ export default function Auth() {
         {/* Email Input */}
         <View style={styles.inputContainer}>
           <Ionicons
-            name='mail-outline'
+            name="mail-outline"
             size={20}
-            color='#6B7280'
+            color="#6B7280"
             style={styles.inputIcon}
           />
           <TextInput
             style={styles.input}
-            placeholder='Email Address'
-            placeholderTextColor='#9CA3AF'
-            keyboardType='email-address'
-            autoCapitalize='none'
+            placeholder="Email Address"
+            placeholderTextColor="#9CA3AF"
+            keyboardType="email-address"
+            autoCapitalize="none"
             value={email}
             onChangeText={setEmail}
             editable={!loading}
@@ -103,17 +102,17 @@ export default function Auth() {
         {/* Password Input */}
         <View style={styles.inputContainer}>
           <Ionicons
-            name='lock-closed-outline'
+            name="lock-closed-outline"
             size={20}
-            color='#6B7280'
+            color="#6B7280"
             style={styles.inputIcon}
           />
           <TextInput
             style={styles.input}
-            placeholder='Password'
-            placeholderTextColor='#9CA3AF'
+            placeholder="Password"
+            placeholderTextColor="#9CA3AF"
             secureTextEntry={!isPasswordVisible}
-            autoCapitalize='none'
+            autoCapitalize="none"
             value={password}
             onChangeText={setPassword}
             editable={!loading}
@@ -125,7 +124,7 @@ export default function Auth() {
             <Ionicons
               name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
               size={22}
-              color='#6B7280'
+              color="#6B7280"
             />
           </Pressable>
         </View>
@@ -133,8 +132,8 @@ export default function Auth() {
         {/* Loading Indicator */}
         {loading && (
           <ActivityIndicator
-            size='large'
-            color='#3B82F6'
+            size="large"
+            color="#3B82F6"
             style={styles.spinner}
           />
         )}
