@@ -1,10 +1,3 @@
-import {
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-  StyleSheet,
-} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {
   differenceInDays,
@@ -16,12 +9,19 @@ import {
   startOfToday,
 } from 'date-fns';
 import React, { useState } from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
+import AddTaskModal from '@/components/AddTaskModal';
 import TaskCardToggle from '@/components/TaskCardToggle';
 import { ThemedText } from '@/components/ThemedText';
 import { useAddTask } from '@/hooks/useAddTask';
 import { useTasks } from '@/hooks/useTasks';
-import AddTaskModal from '@/components/AddTaskModal';
 
 const getGreeting = () => {
   const hour = new Date().getHours();
