@@ -15,7 +15,6 @@ import {
   parseISO,
   startOfToday,
 } from 'date-fns';
-import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 
 import TaskCardToggle from '@/components/TaskCardToggle';
@@ -23,6 +22,13 @@ import { ThemedText } from '@/components/ThemedText';
 import { useAddTask } from '@/hooks/useAddTask';
 import { useTasks } from '@/hooks/useTasks';
 import AddTaskModal from '@/components/AddTaskModal';
+
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning!';
+  if (hour < 18) return 'Good afternoon!';
+  return 'Good evening!';
+};
 
 interface Task {
   id: number;
@@ -36,18 +42,9 @@ interface Task {
   type?: string;
 }
 
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning!';
-  if (hour < 18) return 'Good afternoon!';
-  return 'Good evening!';
-};
-
 export default function Home() {
-  const router = useRouter();
   const { tasks, loading, error, refetch } = useTasks();
   const { addTask } = useAddTask(refetch);
-
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleAddTask = async (
@@ -60,7 +57,7 @@ export default function Home() {
     try {
       await addTask({
         taskName,
-        dueDate, // already ISO formatted from AddTaskModal
+        dueDate,
         shouldRepeat: isRepeating,
         repeatIn: repeatDays ?? undefined,
         type: taskType,
@@ -140,16 +137,6 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topHeader}>
-        <ThemedText type='title'>🏡 Resupply</ThemedText>
-        <TouchableOpacity
-          onPress={() => router.push('/settings')}
-          accessibilityLabel='Settings'
-        >
-          <Ionicons name='settings-outline' size={24} color='#374151' />
-        </TouchableOpacity>
-      </View>
-
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {loading ? (
           <Text>Loading...</Text>
