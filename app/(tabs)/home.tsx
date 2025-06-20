@@ -24,6 +24,13 @@ import { useAddTask } from '@/hooks/useAddTask';
 import { useTasks } from '@/hooks/useTasks';
 import AddTaskModal from '@/components/AddTaskModal';
 
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning!';
+  if (hour < 18) return 'Good afternoon!';
+  return 'Good evening!';
+};
+
 interface Task {
   id: number;
   taskName: string;
@@ -36,18 +43,10 @@ interface Task {
   type?: string;
 }
 
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning!';
-  if (hour < 18) return 'Good afternoon!';
-  return 'Good evening!';
-};
-
 export default function Home() {
   const router = useRouter();
   const { tasks, loading, error, refetch } = useTasks();
   const { addTask } = useAddTask(refetch);
-
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleAddTask = async (
@@ -60,7 +59,7 @@ export default function Home() {
     try {
       await addTask({
         taskName,
-        dueDate, // already ISO formatted from AddTaskModal
+        dueDate,
         shouldRepeat: isRepeating,
         repeatIn: repeatDays ?? undefined,
         type: taskType,
@@ -108,8 +107,7 @@ export default function Home() {
     };
   };
 
-  const { today, week, month, completed, overdueCount } =
-    categorizeTasks(tasks);
+  const { today, week, month, completed, overdueCount } = categorizeTasks(tasks);
 
   const renderSection = (
     title: 'Due Today' | 'Due This Week' | 'Due This Month' | 'Completed',
@@ -117,7 +115,7 @@ export default function Home() {
   ) => (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <ThemedText type='subtitle'>{title}</ThemedText>
+        <ThemedText type="subtitle">{title}</ThemedText>
         <View style={styles.taskCountBadge}>
           <Text style={styles.taskCountText}>{tasksToRender.length}</Text>
         </View>
@@ -140,16 +138,6 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topHeader}>
-        <ThemedText type='title'>🏡 Resupply</ThemedText>
-        <TouchableOpacity
-          onPress={() => router.push('/settings')}
-          accessibilityLabel='Settings'
-        >
-          <Ionicons name='settings-outline' size={24} color='#374151' />
-        </TouchableOpacity>
-      </View>
-
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {loading ? (
           <Text>Loading...</Text>
@@ -158,7 +146,7 @@ export default function Home() {
         ) : (
           <>
             <View style={styles.dashboardContainer}>
-              <ThemedText type='title' style={styles.greetingText}>
+              <ThemedText type="title" style={styles.greetingText}>
                 {getGreeting()}
               </ThemedText>
               <ThemedText style={styles.subGreetingText}>
@@ -167,12 +155,8 @@ export default function Home() {
 
               <View style={styles.statsRow}>
                 <View style={styles.statCard}>
-                  <ThemedText style={styles.statNumber}>
-                    {week.length}
-                  </ThemedText>
-                  <ThemedText style={styles.statLabel}>
-                    Due this week
-                  </ThemedText>
+                  <ThemedText style={styles.statNumber}>{week.length}</ThemedText>
+                  <ThemedText style={styles.statLabel}>Due this week</ThemedText>
                 </View>
                 <View style={styles.statCard}>
                   <ThemedText
@@ -218,7 +202,7 @@ export default function Home() {
         style={styles.addButtonBottom}
         onPress={() => setModalVisible(true)}
       >
-        <Ionicons name='add' size={24} color='#fff' />
+        <Ionicons name="add" size={24} color="#fff" />
         <Text style={styles.addButtonText}>Add Task</Text>
       </TouchableOpacity>
 
