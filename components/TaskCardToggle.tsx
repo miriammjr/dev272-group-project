@@ -105,11 +105,10 @@ export default function TaskCardToggle({
     onStatusChange();
   };
 
-const handleDelete = () => {
-  console.log('Delete button pressed for task ID:', task.id);
-  onDelete(task.id);
-};
-
+  const handleDelete = () => {
+    console.log('Delete button pressed for task ID:', task.id);
+    onDelete(task.id);
+  };
 
   return (
     <View style={styles.card}>
@@ -120,7 +119,7 @@ const handleDelete = () => {
           title={task.completed ? 'Undo' : 'Complete'}
           onPress={handleToggle}
         />
-        <Button title="Delete" color="red" onPress={handleDelete} />
+        <Button title='Delete' color='red' onPress={handleDelete} />
       </View>
     </View>
   );
