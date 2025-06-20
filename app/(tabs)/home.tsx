@@ -1,3 +1,4 @@
+
 import { Ionicons } from '@expo/vector-icons';
 import {
   differenceInDays,
@@ -8,7 +9,7 @@ import {
   parseISO,
   startOfToday,
 } from 'date-fns';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -22,6 +23,7 @@ import TaskCardToggle from '@/components/TaskCardToggle';
 import { ThemedText } from '@/components/ThemedText';
 import { useAddTask } from '@/hooks/useAddTask';
 import { useTasks } from '@/hooks/useTasks';
+import { useDeleteTask } from '@/hooks/useDeleteTask';
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -43,9 +45,15 @@ interface Task {
 }
 
 export default function Home() {
-  const { tasks, loading, error, refetch } = useTasks();
+  const { tasks: fetchedTasks, loading, error, refetch } = useTasks();
   const { addTask } = useAddTask(refetch);
+  const { deleteTask } = useDeleteTask();
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    setTasks(fetchedTasks);
+  }, [fetchedTasks]);
 
   const handleAddTask = async (
     taskName: string,
@@ -65,6 +73,18 @@ export default function Home() {
       setModalVisible(false);
     } catch (err) {
       console.error('Error adding task:', err);
+    }
+  };
+
+  const handleDeleteTask = async (id: number) => {
+    console.log('Attempting to delete task with id:', id);
+    const success = await deleteTask(id);
+    console.log('Delete task result:', success);
+    if (success) {
+      setTasks(prev => prev.filter(task => task.id !== id));
+      console.log('Task removed from local state:', id);
+    } else {
+      console.warn('Failed to delete task from Supabase:', id);
     }
   };
 
@@ -108,13 +128,12 @@ export default function Home() {
     };
   };
 
-  const { today, week, month, completed, overdueCount } =
-    categorizeTasks(tasks);
+  const { today, week, month, completed, overdueCount } = categorizeTasks(tasks);
 
   const renderSection = (title: string, tasksToRender: Task[]) => (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <ThemedText type='subtitle'>{title}</ThemedText>
+        <ThemedText type="subtitle">{title}</ThemedText>
         <View style={styles.taskCountBadge}>
           <Text style={styles.taskCountText}>{tasksToRender.length}</Text>
         </View>
@@ -128,7 +147,7 @@ export default function Home() {
             key={task.id}
             task={task}
             onStatusChange={refetch}
-            onDelete={refetch}
+            onDelete={handleDeleteTask}
           />
         ))
       )}
@@ -145,7 +164,7 @@ export default function Home() {
         ) : (
           <>
             <View style={styles.dashboardContainer}>
-              <ThemedText type='title' style={styles.greetingText}>
+              <ThemedText type="title" style={styles.greetingText}>
                 {getGreeting()}
               </ThemedText>
               <ThemedText style={styles.subGreetingText}>
@@ -205,7 +224,7 @@ export default function Home() {
         style={styles.addButtonBottom}
         onPress={() => setModalVisible(true)}
       >
-        <Ionicons name='add' size={24} color='#fff' />
+        <Ionicons name="add" size={24} color="#fff" />
         <Text style={styles.addButtonText}>Add Task</Text>
       </TouchableOpacity>
 
