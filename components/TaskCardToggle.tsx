@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet, Alert } from 'react-native';
 import { supabase } from '../utils/supabase';
+import { differenceInDays } from 'date-fns';
 
 type Task = {
   id: number;
@@ -9,6 +10,7 @@ type Task = {
   dueDate: string; // ISO string
   shouldRepeat: boolean;
   repeatIn: number; // Number of days
+  type?: string;
 };
 
 interface TaskCardToggleProps {
@@ -22,16 +24,18 @@ export default function TaskCardToggle({
   onStatusChange,
   onDelete,
 }: TaskCardToggleProps) {
-  const getNextDueDate = (currentDate: Date, days: number): Date => {
-    const nextDate = new Date(currentDate);
+  const getNextDueDate = (days: number): Date => {
+    const nextDate = new Date();
     nextDate.setDate(nextDate.getDate() + days);
     return nextDate;
   };
 
   const handleToggle = async () => {
+    const newCompletedState = !task.completed;
+
     const { error: updateError } = await supabase
       .from('TaskList')
-      .update({ completed: !task.completed })
+      .update({ completed: newCompletedState })
       .eq('id', task.id);
 
     if (updateError) {
@@ -40,7 +44,11 @@ export default function TaskCardToggle({
       return;
     }
 
-    if (!task.completed && task.shouldRepeat && task.repeatIn > 0) {
+    if (
+      newCompletedState &&
+      task.shouldRepeat &&
+      task.repeatIn > 0
+    ) {
       const {
         data: { user },
         error: authError,
@@ -48,33 +56,53 @@ export default function TaskCardToggle({
 
       if (authError || !user) {
         console.error('User not authenticated:', authError);
-        return;
-      }
+      } else {
+        const { data: existingTasks, error: checkError } = await supabase
+          .from('TaskList')
+          .select('id')
+          .eq('taskName', task.taskName)
+          .eq('idUserAccount', user.id)
+          .eq('completed', false)
+          .gt('dueDate', new Date().toISOString());
 
-      const nextDueDate = getNextDueDate(new Date(task.dueDate), task.repeatIn);
+        if (checkError) {
+          console.error('Error checking for duplicate repeat:', checkError);
+        } else if (!existingTasks || existingTasks.length === 0) {
+          const completionDate = new Date();
+          const previousDueDate = new Date(task.dueDate);
+          const actualInterval = Math.max(1, differenceInDays(completionDate, previousDueDate));
+          const newRepeatIn = Math.round((actualInterval + task.repeatIn) / 2);
+          const nextDueDate = getNextDueDate(newRepeatIn);
 
-      const { error: insertError } = await supabase.from('TaskList').insert([
-        {
-          taskName: task.taskName,
-          completed: false,
-          dueDate: nextDueDate.toISOString(),
-          shouldRepeat: true,
-          repeatIn: task.repeatIn,
-          idUserAccount: user.id, // ✅ Required for RLS
-        },
-      ]);
+          const { error: insertError } = await supabase.from('TaskList').insert([
+            {
+              taskName: task.taskName,
+              completed: false,
+              dueDate: nextDueDate.toISOString(),
+              shouldRepeat: true,
+              repeatIn: newRepeatIn,
+              idUserAccount: user.id,
+              createdDate: new Date().toISOString(),
+              type: task.type ?? 'chore',
+            },
+          ]);
 
-      if (insertError) {
-        console.error('Failed to create repeated task:', {
-          message: insertError.message,
-          details: insertError.details,
-          hint: insertError.hint,
-          code: insertError.code,
-        });
+          if (insertError) {
+            console.error('Failed to create repeated task:', {
+              message: insertError.message,
+              details: insertError.details,
+              hint: insertError.hint,
+              code: insertError.code,
+            });
+          }
+        } else {
+          console.log('Repeat task already exists. Skipping insert.');
+        }
       }
     }
 
-    onStatusChange(); // Refresh task list
+    // ✅ Always refresh the task list
+    onStatusChange();
   };
 
   const handleDelete = async () => {
@@ -93,7 +121,7 @@ export default function TaskCardToggle({
             Alert.alert('Error', 'Failed to delete task.');
             console.error('Delete error:', error);
           } else {
-            onDelete(task.id); // Notify parent to refresh
+            onDelete(task.id);
           }
         },
       },
