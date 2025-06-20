@@ -29,7 +29,6 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
   onAddTask,
 }) => {
   const [taskName, setTaskName] = useState('');
-  const [dueDate, setDueDate] = useState('');
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [isRepeating, setIsRepeating] = useState(false);
@@ -46,7 +45,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
   useEffect(() => {
     if (visible) {
       const now = new Date();
-      Date(formatDate(now));
+      setDate(now);
     }
   }, [visible]);
 
@@ -54,36 +53,37 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
     setShowPicker(false);
     if (selectedDate) {
       setDate(selectedDate);
-      setDueDate(formatDate(selectedDate));
     }
   };
 
-  const handleSubmit = () => {
-    if (!taskName || !dueDate || !taskType) return;
+const handleSubmit = () => {
+  if (!taskName || !taskType) return;
 
-    const isoDueDate = date.toISOString();
+  const isoDueDate = date.toISOString(); // ✅ This line was missing
+  const repeatDaysInt = parseInt(repeatDays, 10);
 
-    onAddTask(
-      taskName,
-      isoDueDate,
-      isRepeating,
-      isRepeating ? parseInt(repeatDays, 10) : null,
-      taskType,
-    );
+  onAddTask(
+    taskName,
+    isoDueDate,
+    isRepeating,
+    isRepeating ? (isNaN(repeatDaysInt) ? null : repeatDaysInt) : null,
+    taskType,
+  );
 
-    setTaskName('');
-    setDueDate('');
-    setDate(new Date());
-    setIsRepeating(false);
-    setRepeatDays('');
-    setTaskType('chore');
-    onClose();
-  };
+  setTaskName('');
+  setDate(new Date());
+  setIsRepeating(false);
+  setRepeatDays('');
+  setTaskType('chore');
+  onClose();
+};
+
+  const dueDate = formatDate(date);
 
   return (
     <Modal
       visible={visible}
-      animationType='fade'
+      animationType="fade"
       transparent
       onRequestClose={onClose}
     >
@@ -93,8 +93,8 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
 
           <TextInput
             style={styles.input}
-            placeholder='Task Name (e.g., Buy milk)'
-            placeholderTextColor='#9CA3AF'
+            placeholder="Task Name (e.g., Buy milk)"
+            placeholderTextColor="#9CA3AF"
             value={taskName}
             onChangeText={setTaskName}
           />
@@ -102,10 +102,10 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
           {Platform.OS === 'web' ? (
             <TextInput
               style={styles.input}
-              placeholder='Due Date (MM-DD-YYYY)'
-              placeholderTextColor='#9CA3AF'
+              placeholder="Due Date (MM-DD-YYYY)"
+              placeholderTextColor="#9CA3AF"
               value={dueDate}
-              onChangeText={setDueDate}
+              editable={false}
             />
           ) : (
             <>
@@ -120,8 +120,8 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
               {showPicker && (
                 <DateTimePicker
                   value={date}
-                  mode='date'
-                  display='default'
+                  mode="date"
+                  display="default"
                   onChange={handleDateChange}
                 />
               )}
@@ -132,38 +132,25 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
             <View style={styles.taskTypeContainer}>
               <Text style={styles.switchLabel}>Task Type</Text>
               <View style={styles.typeButtons}>
-                <TouchableOpacity
-                  style={[
-                    styles.typeButton,
-                    taskType === 'chore' && styles.typeButtonSelected,
-                  ]}
-                  onPress={() => setTaskType('chore')}
-                >
-                  <Text
+                {['chore', 'supply'].map((type) => (
+                  <TouchableOpacity
+                    key={type}
                     style={[
-                      styles.typeButtonText,
-                      taskType === 'chore' && styles.typeButtonTextSelected,
+                      styles.typeButton,
+                      taskType === type && styles.typeButtonSelected,
                     ]}
+                    onPress={() => setTaskType(type as 'chore' | 'supply')}
                   >
-                    Chore
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
-                    styles.typeButton,
-                    taskType === 'supply' && styles.typeButtonSelected,
-                  ]}
-                  onPress={() => setTaskType('supply')}
-                >
-                  <Text
-                    style={[
-                      styles.typeButtonText,
-                      taskType === 'supply' && styles.typeButtonTextSelected,
-                    ]}
-                  >
-                    Supply
-                  </Text>
-                </TouchableOpacity>
+                    <Text
+                      style={[
+                        styles.typeButtonText,
+                        taskType === type && styles.typeButtonTextSelected,
+                      ]}
+                    >
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </View>
             </View>
 
@@ -176,11 +163,11 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
           {isRepeating && (
             <TextInput
               style={styles.input}
-              placeholder='Repeat every X days'
-              placeholderTextColor='#9CA3AF'
+              placeholder="Repeat every X days"
+              placeholderTextColor="#9CA3AF"
               value={repeatDays}
               onChangeText={setRepeatDays}
-              keyboardType='numeric'
+              keyboardType="numeric"
             />
           )}
 
@@ -205,6 +192,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
 };
 
 export default AddTaskModal;
+
 
 const styles = StyleSheet.create({
   modalContainer: {
