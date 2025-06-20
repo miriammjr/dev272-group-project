@@ -35,10 +35,12 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
   const [isRepeating, setIsRepeating] = useState(false);
   const [repeatDays, setRepeatDays] = useState('');
   const [taskType, setTaskType] = useState<'chore' | 'supply'>('chore');
-  const [errors, setErrors] = useState<TaskValidationErrors>({ taskName: '', repeatDays: '' });
-const [dateInput, setDateInput] = useState('');
-const [dateError, setDateError] = useState('');
-
+  const [errors, setErrors] = useState<TaskValidationErrors>({
+    taskName: '',
+    repeatDays: '',
+  });
+  const [dateInput, setDateInput] = useState('');
+  const [dateError, setDateError] = useState('');
 
   const formatDate = (date: Date) => {
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -47,14 +49,14 @@ const [dateError, setDateError] = useState('');
     return `${month}-${day}-${year}`;
   };
 
-useEffect(() => {
-  if (visible) {
-    const now = new Date();
-    setDate(now);
-    setDateInput(formatDate(now));
-    setDateError('');
-  }
-}, [visible]);
+  useEffect(() => {
+    if (visible) {
+      const now = new Date();
+      setDate(now);
+      setDateInput(formatDate(now));
+      setDateError('');
+    }
+  }, [visible]);
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
     setShowPicker(false);
@@ -64,8 +66,14 @@ useEffect(() => {
   };
 
   const handleSubmit = () => {
-    const validationErrors = validateTaskInput(taskName, isRepeating, repeatDays);
-    const hasError = Object.values(validationErrors).some(error => error !== '');
+    const validationErrors = validateTaskInput(
+      taskName,
+      isRepeating,
+      repeatDays,
+    );
+    const hasError = Object.values(validationErrors).some(
+      error => error !== '',
+    );
 
     setErrors(validationErrors);
     if (hasError) return;
@@ -90,12 +98,10 @@ useEffect(() => {
     onClose();
   };
 
-  const dueDate = formatDate(date);
-
   return (
     <Modal
       visible={visible}
-      animationType="fade"
+      animationType='fade'
       transparent
       onRequestClose={onClose}
     >
@@ -105,21 +111,23 @@ useEffect(() => {
 
           <TextInput
             style={styles.input}
-            placeholder="Task Name (e.g., Buy milk)"
-            placeholderTextColor="#9CA3AF"
+            placeholder='Task Name (e.g., Buy milk)'
+            placeholderTextColor='#9CA3AF'
             value={taskName}
             onChangeText={setTaskName}
           />
-          {errors.taskName ? <Text style={styles.errorText}>{errors.taskName}</Text> : null}
+          {errors.taskName ? (
+            <Text style={styles.errorText}>{errors.taskName}</Text>
+          ) : null}
 
           {Platform.OS === 'web' ? (
             <>
               <TextInput
                 style={styles.input}
-                placeholder="Due Date (MM-DD-YYYY)"
-                placeholderTextColor="#9CA3AF"
+                placeholder='Due Date (MM-DD-YYYY)'
+                placeholderTextColor='#9CA3AF'
                 value={dateInput}
-                onChangeText={(text) => {
+                onChangeText={text => {
                   setDateInput(text);
                   const [month, day, year] = text.split('-');
                   const parsedDate = new Date(`${year}-${month}-${day}`);
@@ -130,11 +138,15 @@ useEffect(() => {
                     setDate(parsedDate);
                     setDateError('');
                   } else {
-                    setDateError('Please enter a valid date in MM-DD-YYYY format.');
+                    setDateError(
+                      'Please enter a valid date in MM-DD-YYYY format.',
+                    );
                   }
                 }}
               />
-              {dateError ? <Text style={styles.errorText}>{dateError}</Text> : null}
+              {dateError ? (
+                <Text style={styles.errorText}>{dateError}</Text>
+              ) : null}
             </>
           ) : (
             <>
@@ -142,27 +154,28 @@ useEffect(() => {
                 onPress={() => setShowPicker(true)}
                 style={styles.input}
               >
-                <Text style={{ color: formatDate(date) ? '#111827' : '#9CA3AF' }}>
+                <Text
+                  style={{ color: formatDate(date) ? '#111827' : '#9CA3AF' }}
+                >
                   {formatDate(date) || 'Select Due Date'}
                 </Text>
               </TouchableOpacity>
               {showPicker && (
                 <DateTimePicker
                   value={date}
-                  mode="date"
-                  display="default"
+                  mode='date'
+                  display='default'
                   onChange={handleDateChange}
                 />
               )}
             </>
           )}
 
-
           <View style={styles.rowContainer}>
             <View style={styles.taskTypeContainer}>
               <Text style={styles.switchLabel}>Task Type</Text>
               <View style={styles.typeButtons}>
-                {['chore', 'supply'].map((type) => (
+                {['chore', 'supply'].map(type => (
                   <TouchableOpacity
                     key={type}
                     style={[
@@ -194,11 +207,11 @@ useEffect(() => {
             <>
               <TextInput
                 style={styles.input}
-                placeholder="Repeat every X days"
-                placeholderTextColor="#9CA3AF"
+                placeholder='Repeat every X days'
+                placeholderTextColor='#9CA3AF'
                 value={repeatDays}
                 onChangeText={setRepeatDays}
-                keyboardType="numeric"
+                keyboardType='numeric'
               />
               {errors.repeatDays ? (
                 <Text style={styles.errorText}>{errors.repeatDays}</Text>
