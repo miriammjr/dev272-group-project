@@ -1,3 +1,8 @@
+import { supabase } from '@/utils/supabase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import * as Notifications from 'expo-notifications';
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
@@ -10,11 +15,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import * as Notifications from 'expo-notifications';
-import { router } from 'expo-router';
-import { supabase } from '@/utils/supabase';
 
 export default function SettingsScreen() {
   const [email, setEmail] = useState('');
@@ -105,7 +105,7 @@ export default function SettingsScreen() {
       }
 
       Alert.alert('Logged Out', 'You have been logged out.');
-      router.replace('/');
+      router.replace('/Auth');
     } catch (e) {
       console.error('Logout error:', e);
       Alert.alert('Error', 'Failed to log out.');
