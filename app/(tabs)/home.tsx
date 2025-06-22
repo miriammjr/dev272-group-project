@@ -23,14 +23,6 @@ import { ThemedText } from '@/components/ThemedText';
 import { useAddTask } from '@/hooks/useAddTask';
 import { useDeleteTask } from '@/hooks/useDeleteTask';
 import { useTasks } from '@/hooks/useTasks';
-import { useDeleteTask } from '@/hooks/useDeleteTask';
-
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning!';
-  if (hour < 18) return 'Good afternoon!';
-  return 'Good evening!';
-};
 
 const getGreeting = () => {
   const hour = new Date().getHours();

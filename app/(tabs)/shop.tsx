@@ -1,7 +1,9 @@
 import { generateStoreLinks } from '@/utils/GenerateStoreLink';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Linking,
@@ -19,19 +21,17 @@ interface Supply {
 
 export default function ShopScreen() {
   const [supplies, setSupplies] = useState<Supply[]>([]);
-
-  useEffect(() => {
-    loadSupplies();
-  }, []);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const loadSupplies = async () => {
+    setLoading(true);
     try {
       const data = await AsyncStorage.getItem('supplies');
-      if (data) {
-        setSupplies(JSON.parse(data));
-      }
+      setSupplies(data ? JSON.parse(data) : []);
     } catch (error) {
       console.error('Failed to load supplies from storage:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,11 +58,23 @@ export default function ShopScreen() {
     ]);
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      loadSupplies();
+    }, []),
+  );
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.heading}>🛒 Supply Shopping</Text>
 
-      {supplies.length === 0 ? (
+      {loading ? (
+        <ActivityIndicator
+          size='large'
+          color='#555'
+          style={{ marginTop: 20 }}
+        />
+      ) : supplies.length === 0 ? (
         <Text style={styles.emptyText}>No supplies added yet.</Text>
       ) : (
         supplies.map((supply, index) => {
@@ -101,7 +113,6 @@ export default function ShopScreen() {
     </ScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     padding: 16,
