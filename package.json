@@ -10,7 +10,7 @@
     "web": "dotenv -e .env.local expo start --web",
     "lint": "expo lint",
     "prepare": "husky install",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll --coverage"
   },
   "jest": {
     "preset": "jest-expo",
