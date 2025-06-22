@@ -21,7 +21,6 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  // --- AUTHENTICATION FUNCTIONS ---
   async function signInWithEmail() {
     if (!email || !password) {
       Alert.alert('Please enter both email and password.');

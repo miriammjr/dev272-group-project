@@ -1,14 +1,16 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet, Alert } from 'react-native';
 import { supabase } from '../utils/supabase';
+import { differenceInDays } from 'date-fns';
 
 type Task = {
   id: number;
   taskName: string;
   completed: boolean;
-  dueDate: string; // ISO string
+  dueDate: string;
   shouldRepeat: boolean;
-  repeatIn: number; // Number of days
+  repeatIn: number;
+  type?: string;
 };
 
 interface TaskCardToggleProps {
@@ -22,68 +24,90 @@ export default function TaskCardToggle({
   onStatusChange,
   onDelete,
 }: TaskCardToggleProps) {
-  const getNextDueDate = (currentDate: Date, days: number): Date => {
-    const nextDate = new Date(currentDate);
+  const getNextDueDate = (days: number): Date => {
+    const nextDate = new Date();
     nextDate.setDate(nextDate.getDate() + days);
     return nextDate;
   };
 
   const handleToggle = async () => {
-    const { error } = await supabase
+    const newCompletedState = !task.completed;
+
+    const { error: updateError } = await supabase
       .from('TaskList')
-      .update({ completed: !task.completed })
+      .update({ completed: newCompletedState })
       .eq('id', task.id);
 
-    if (error) {
+    if (updateError) {
       Alert.alert('Error', 'Failed to update task status.');
-      console.error('Toggle error:', error);
-    } else {
-      if (!task.completed && task.shouldRepeat && task.repeatIn > 0) {
-        const nextDueDate = getNextDueDate(
-          new Date(task.dueDate),
-          task.repeatIn,
-        );
+      console.error('Toggle error:', updateError);
+      return;
+    }
 
-        const { error: insertError } = await supabase.from('TaskList').insert([
-          {
-            taskName: task.taskName,
-            completed: false,
-            dueDate: nextDueDate.toISOString(),
-            shouldRepeat: true,
-            repeatIn: task.repeatIn,
-          },
-        ]);
+    if (newCompletedState && task.shouldRepeat && task.repeatIn > 0) {
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
 
-        if (insertError) {
-          console.error('Failed to create repeated task:', insertError);
+      if (authError || !user) {
+        console.error('User not authenticated:', authError);
+      } else {
+        const { data: existingTasks, error: checkError } = await supabase
+          .from('TaskList')
+          .select('id')
+          .eq('taskName', task.taskName)
+          .eq('idUserAccount', user.id)
+          .eq('completed', false)
+          .gt('dueDate', new Date().toISOString());
+
+        if (checkError) {
+          console.error('Error checking for duplicate repeat:', checkError);
+        } else if (!existingTasks || existingTasks.length === 0) {
+          const completionDate = new Date();
+          const previousDueDate = new Date(task.dueDate);
+          const actualInterval = Math.max(
+            1,
+            differenceInDays(completionDate, previousDueDate),
+          );
+          const newRepeatIn = Math.round((actualInterval + task.repeatIn) / 2);
+          const nextDueDate = getNextDueDate(newRepeatIn);
+
+          const { error: insertError } = await supabase
+            .from('TaskList')
+            .insert([
+              {
+                taskName: task.taskName,
+                completed: false,
+                dueDate: nextDueDate.toISOString(),
+                shouldRepeat: true,
+                repeatIn: newRepeatIn,
+                idUserAccount: user.id,
+                createdDate: new Date().toISOString(),
+                type: task.type ?? 'chore',
+              },
+            ]);
+
+          if (insertError) {
+            console.error('Failed to create repeated task:', {
+              message: insertError.message,
+              details: insertError.details,
+              hint: insertError.hint,
+              code: insertError.code,
+            });
+          }
+        } else {
+          console.log('Repeat task already exists. Skipping insert.');
         }
       }
-
-      onStatusChange(); // Refresh task list
     }
+
+    onStatusChange();
   };
 
-  const handleDelete = async () => {
-    Alert.alert('Delete Task', 'Are you sure you want to delete this task?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          const { error } = await supabase
-            .from('TaskList')
-            .delete()
-            .eq('id', task.id);
-
-          if (error) {
-            Alert.alert('Error', 'Failed to delete task.');
-            console.error('Delete error:', error);
-          } else {
-            onDelete(task.id); // Notify parent to refresh
-          }
-        },
-      },
-    ]);
+  const handleDelete = () => {
+    console.log('Delete button pressed for task ID:', task.id);
+    onDelete(task.id);
   };
 
   return (
@@ -103,19 +127,20 @@ export default function TaskCardToggle({
 
 const styles = StyleSheet.create({
   card: {
-    padding: 12,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#fff',
+    padding: 16,
+    marginVertical: 8,
     borderRadius: 8,
-    marginBottom: 8,
+    elevation: 2,
   },
   taskName: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: 'bold',
   },
   dueDate: {
     fontSize: 14,
-    color: '#555',
-    marginTop: 4,
+    color: '#666',
+    marginVertical: 4,
   },
   actions: {
     flexDirection: 'row',
