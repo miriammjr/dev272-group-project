@@ -1,70 +1,89 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  TextInput,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
-import { Image } from 'expo-image';
-import {
-  isToday,
-  isThisWeek,
-  isThisMonth,
-  parseISO,
-  isBefore,
-  startOfToday,
-  differenceInDays,
-} from 'date-fns';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import {
+  differenceInDays,
+  isBefore,
+  isThisMonth,
+  isThisWeek,
+  isToday,
+  parseISO,
+  startOfToday,
+} from 'date-fns';
+import React, { useEffect, useState } from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
-import ParallaxScrollView from '@/components/ParallaxScrollView';
+import AddTaskModal from '@/components/AddTaskModal';
 import TaskCardToggle from '@/components/TaskCardToggle';
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-import { useTasks } from '@/hooks/useTasks';
 import { useAddTask } from '@/hooks/useAddTask';
+import { useTasks } from '@/hooks/useTasks';
+import { useDeleteTask } from '@/hooks/useDeleteTask';
 
-type Task = {
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning!';
+  if (hour < 18) return 'Good afternoon!';
+  return 'Good evening!';
+};
+
+interface Task {
   id: number;
   taskName: string;
   dueDate: string;
   completed: boolean;
   frequency?: number;
   lastCompletedAt?: string | null;
-};
+  shouldRepeat?: boolean;
+  repeatIn?: number;
+  type?: string;
+}
 
-export default function Resupply() {
-  const router = useRouter();
-  const { tasks, loading, error, refetch } = useTasks();
+export default function Home() {
+  const { tasks: fetchedTasks, loading, error, refetch } = useTasks();
   const { addTask } = useAddTask(refetch);
-
+  const { deleteTask } = useDeleteTask();
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [taskName, setTaskName] = useState('');
-  const [dueDate, setDueDate] = useState('');
 
-  const handleAddTask = async () => {
-    if (!taskName || !dueDate) return;
+  useEffect(() => {
+    setTasks(fetchedTasks);
+  }, [fetchedTasks]);
 
+  const handleAddTask = async (
+    taskName: string,
+    dueDate: string,
+    isRepeating: boolean,
+    repeatDays: number | null,
+    taskType: string,
+  ) => {
     try {
-      const localDate = new Date(`${dueDate}T00:00:00`);
-      const offsetMinutes = localDate.getTimezoneOffset();
-      const utcDate = new Date(localDate.getTime() - offsetMinutes * 60000);
-
       await addTask({
         taskName,
-        dueDate: utcDate.toISOString(),
+        dueDate,
+        shouldRepeat: isRepeating,
+        repeatIn: repeatDays ?? undefined,
+        type: taskType,
       });
-
       setModalVisible(false);
-      setTaskName('');
-      setDueDate('');
     } catch (err) {
-      alert('Error adding task: ' + err.message);
+      console.error('Error adding task:', err);
+    }
+  };
+
+  const handleDeleteTask = async (id: number) => {
+    console.log('Attempting to delete task with id:', id);
+    const success = await deleteTask(id);
+    console.log('Delete task result:', success);
+    if (success) {
+      setTasks(prev => prev.filter(task => task.id !== id));
+      console.log('Task removed from local state:', id);
+    } else {
+      console.warn('Failed to delete task from Supabase:', id);
     }
   };
 
@@ -73,61 +92,62 @@ export default function Resupply() {
     const week: Task[] = [];
     const month: Task[] = [];
     const completed: Task[] = [];
+    const overdue: Task[] = [];
 
     const now = new Date();
     const todayStart = startOfToday();
 
     tasks.forEach(task => {
-      if (task.completed) {
-        completed.push(task);
-        return;
-      }
+      if (task.completed) return completed.push(task);
 
       const due = parseISO(task.dueDate);
 
       if (task.frequency && task.lastCompletedAt) {
         const lastDone = parseISO(task.lastCompletedAt);
-        const daysSince = differenceInDays(now, lastDone);
-        if (daysSince >= task.frequency) {
-          today.push(task);
-          return;
+        if (differenceInDays(now, lastDone) >= task.frequency) {
+          return today.push(task);
         }
       }
 
-      if (isBefore(due, todayStart) || isToday(due)) {
-        today.push(task);
-      } else if (isThisWeek(due, { weekStartsOn: 1 })) {
-        week.push(task);
-      } else if (isThisMonth(due)) {
-        month.push(task);
-      }
+      if (isBefore(due, todayStart)) return overdue.push(task);
+      if (isToday(due)) return today.push(task);
+      if (isThisWeek(due, { weekStartsOn: 1 })) return week.push(task);
+      if (isThisMonth(due)) return month.push(task);
     });
 
     const sortByDueDate = (a: Task, b: Task) =>
       new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
 
     return {
-      today: today.sort(sortByDueDate),
+      today: [...overdue, ...today].sort(sortByDueDate),
       week: week.sort(sortByDueDate),
       month: month.sort(sortByDueDate),
       completed: completed.sort(sortByDueDate),
+      overdueCount: overdue.length,
     };
   };
 
-  const { today, week, month, completed } = categorizeTasks(tasks);
+  const { today, week, month, completed, overdueCount } =
+    categorizeTasks(tasks);
 
-  const renderSection = (title: string, tasks: Task[]) => (
+  const renderSection = (title: string, tasksToRender: Task[]) => (
     <View style={styles.section}>
-      <ThemedText type='subtitle'>{title}</ThemedText>
-      {tasks.length === 0 ? (
-        <Text style={styles.emptyText}>No tasks</Text>
+      <View style={styles.sectionHeader}>
+        <ThemedText type='subtitle'>{title}</ThemedText>
+        <View style={styles.taskCountBadge}>
+          <Text style={styles.taskCountText}>{tasksToRender.length}</Text>
+        </View>
+      </View>
+
+      {tasksToRender.length === 0 ? (
+        <Text style={styles.emptyText}>No tasks in this section.</Text>
       ) : (
-        tasks.map(task => (
+        tasksToRender.map(task => (
           <TaskCardToggle
             key={task.id}
             task={task}
             onStatusChange={refetch}
-            onDelete={refetch}
+            onDelete={handleDeleteTask}
           />
         ))
       )}
@@ -135,151 +155,213 @@ export default function Resupply() {
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      {/* Absolute Settings Button */}
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {loading ? (
+          <Text>Loading...</Text>
+        ) : error ? (
+          <Text style={{ color: 'red', textAlign: 'center' }}>{error}</Text>
+        ) : (
+          <>
+            <View style={styles.dashboardContainer}>
+              <ThemedText type='title' style={styles.greetingText}>
+                {getGreeting()}
+              </ThemedText>
+              <ThemedText style={styles.subGreetingText}>
+                Here’s your summary for today.
+              </ThemedText>
+
+              <View style={styles.statsRow}>
+                <View style={styles.statCard}>
+                  <ThemedText style={styles.statNumber}>
+                    {week.length}
+                  </ThemedText>
+                  <ThemedText style={styles.statLabel}>
+                    Due this week
+                  </ThemedText>
+                </View>
+                <View style={styles.statCard}>
+                  <ThemedText
+                    style={[
+                      styles.statNumber,
+                      overdueCount > 0 && styles.overdueText,
+                    ]}
+                  >
+                    {overdueCount}
+                  </ThemedText>
+                  <ThemedText style={styles.statLabel}>Overdue</ThemedText>
+                </View>
+              </View>
+
+              <ThemedText style={styles.progressLabel}>
+                Monthly Progress: {completed.length} / {tasks.length} tasks
+              </ThemedText>
+              <View style={styles.progressContainer}>
+                <View
+                  style={[
+                    styles.progressBar,
+                    {
+                      width: `${
+                        tasks.length > 0
+                          ? (completed.length / tasks.length) * 100
+                          : 0
+                      }%`,
+                    },
+                  ]}
+                />
+              </View>
+            </View>
+
+            {renderSection('Due Today', today)}
+            {renderSection('Due This Week', week)}
+            {renderSection('Due This Month', month)}
+            {renderSection('Completed', completed)}
+          </>
+        )}
+      </ScrollView>
+
       <TouchableOpacity
-        style={styles.settingsIcon}
-        onPress={() => router.push('/settings')}
-        accessibilityLabel='Settings'
+        style={styles.addButtonBottom}
+        onPress={() => setModalVisible(true)}
       >
-        <Ionicons name='settings-outline' size={28} color='#444' />
+        <Ionicons name='add' size={24} color='#fff' />
+        <Text style={styles.addButtonText}>Add Task</Text>
       </TouchableOpacity>
 
-      <ParallaxScrollView
-        headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-        headerImage={
-          <Image
-            source={require('@/assets/images/partial-react-logo.png')}
-            style={styles.reactLogo}
-          />
-        }
-      >
-        <ThemedView style={styles.headerRow}>
-          <ThemedText type='title'>Resupply</ThemedText>
-          <TouchableOpacity
-            style={styles.addButtonTop}
-            onPress={() => setModalVisible(true)}
-          >
-            <Text style={styles.addButtonText}>+ Add Task</Text>
-          </TouchableOpacity>
-        </ThemedView>
-
-        <ThemedView style={styles.stepContainer}>
-          {loading && <Text>Loading...</Text>}
-          {error && <Text style={{ color: 'red' }}>{error}</Text>}
-          {renderSection('Due Today', today)}
-          {renderSection('Due This Week', week)}
-          {renderSection('Due This Month', month)}
-          {renderSection('Completed', completed)}
-        </ThemedView>
-      </ParallaxScrollView>
-
-      <Modal visible={modalVisible} animationType='slide' transparent>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add New Task</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder='Task Name'
-              value={taskName}
-              onChangeText={setTaskName}
-            />
-
-            <TextInput
-              style={styles.input}
-              placeholder='Due Date (YYYY-MM-DD)'
-              value={dueDate}
-              onChangeText={setDueDate}
-            />
-
-            <View style={styles.modalButtons}>
-              <Button title='Cancel' onPress={() => setModalVisible(false)} />
-              <Button title='Add Task' onPress={handleAddTask} />
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <AddTaskModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onAddTask={handleAddTask}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  headerRow: {
+  container: {
+    flex: 1,
+    backgroundColor: '#F3F4F6',
+  },
+  topHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    paddingTop: 50,
     paddingHorizontal: 16,
+    paddingBottom: 16,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  scrollContainer: {
     paddingHorizontal: 16,
+    paddingBottom: 100,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  dashboardContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
   },
-  addButtonTop: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 20,
+  greetingText: {
+    fontSize: 26,
+    fontWeight: 'bold',
   },
-  addButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    padding: 20,
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    gap: 12,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 6,
-    padding: 10,
+  subGreetingText: {
     fontSize: 16,
+    color: '#6B7280',
+    marginTop: 4,
+    marginBottom: 16,
   },
-  modalButtons: {
+  statsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
+    justifyContent: 'space-around',
+    marginBottom: 16,
+  },
+  statCard: {
+    alignItems: 'center',
+    backgroundColor: '#F9FAFB',
+    padding: 16,
+    borderRadius: 8,
+    flex: 1,
+    marginHorizontal: 4,
+  },
+  statNumber: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#111827',
+  },
+  overdueText: {
+    color: '#EF4444',
+  },
+  statLabel: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginTop: 2,
+  },
+  progressLabel: {
+    fontSize: 14,
+    color: '#374151',
+    marginBottom: 8,
+    fontWeight: '500',
+  },
+  progressContainer: {
+    height: 8,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#3B82F6',
   },
   section: {
-    marginBottom: 24,
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  taskCountBadge: {
+    backgroundColor: '#E5E7EB',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  taskCountText: {
+    color: '#374151',
+    fontWeight: '600',
+    fontSize: 12,
   },
   emptyText: {
     fontStyle: 'italic',
-    color: '#888',
+    color: '#6B7280',
     marginTop: 8,
+    fontSize: 14,
+    textAlign: 'center',
   },
-  settingsIcon: {
+  addButtonBottom: {
     position: 'absolute',
-    top: 48,
-    right: 22,
-    zIndex: 100,
-    padding: 6,
-    backgroundColor: '#fff',
-    borderRadius: 24,
-    elevation: 4,
+    bottom: 30,
+    right: 20,
+    backgroundColor: '#2563EB',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 28,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 8,
+  },
+  addButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });
