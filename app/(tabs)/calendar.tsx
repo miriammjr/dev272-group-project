@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { Calendar } from 'react-native-calendars';
 import TaskCard from '@/components/TaskCard';
 import { useTasks } from '@/hooks/useTasks';
+import React, { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { Calendar } from 'react-native-calendars';
 
 export default function CalendarScreen() {
   const { tasks, loading, error } = useTasks();

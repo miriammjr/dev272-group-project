@@ -46,7 +46,9 @@
     "react-native-screens": "~4.11.1",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
-    "supabase": "^2.24.3"
+    "supabase": "^2.24.3",
+    "expo-camera": "~16.1.8",
+    "expo-image-picker": "~16.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
