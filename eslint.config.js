@@ -2,6 +2,7 @@ const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
 const prettier = require('eslint-plugin-prettier');
 const jest = require('eslint-plugin-jest');
+const noHtmlEscapes = require('./eslint-rules/no-html-escapes.js'); // 👈 custom rule
 
 module.exports = defineConfig([
   expoConfig,
@@ -16,10 +17,16 @@ module.exports = defineConfig([
     },
     plugins: {
       prettier,
+      'custom-rules': {
+        rules: {
+          'no-html-escapes': noHtmlEscapes,
+        },
+      },
     },
     rules: {
       'prettier/prettier': 'error',
       semi: ['warn', 'always'],
+      'custom-rules/no-html-escapes': 'warn', // 👈 enable the custom rule
     },
   },
   {
