@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1750713005989" clover="3.2.0">
-  <project timestamp="1750713005989" name="All files">
-    <metrics statements="242" coveredstatements="111" conditionals="142" coveredconditionals="47" methods="44" coveredmethods="21" elements="428" coveredelements="179" complexity="0" loc="242" ncloc="242" packages="5" files="13" classes="13"/>
+<coverage generated="1750719527834" clover="3.2.0">
+  <project timestamp="1750719527834" name="All files">
+    <metrics statements="242" coveredstatements="121" conditionals="142" coveredconditionals="55" methods="44" coveredmethods="22" elements="428" coveredelements="198" complexity="0" loc="242" ncloc="242" packages="5" files="13" classes="13"/>
     <package name="app.(tabs)">
       <metrics statements="55" coveredstatements="36" conditionals="34" coveredconditionals="14" methods="14" coveredmethods="8"/>
       <file name="home.tsx" path="C:\Users\Milton\Documents\DEV272\dev272-group-project\app\(tabs)\home.tsx">
@@ -275,7 +275,7 @@
       </file>
     </package>
     <package name="utils">
-      <metrics statements="15" coveredstatements="4" conditionals="12" coveredconditionals="3" methods="1" coveredmethods="0"/>
+      <metrics statements="15" coveredstatements="14" conditionals="12" coveredconditionals="11" methods="1" coveredmethods="1"/>
       <file name="supabase.ts" path="C:\Users\Milton\Documents\DEV272\dev272-group-project\utils\supabase.ts">
         <metrics statements="5" coveredstatements="4" conditionals="4" coveredconditionals="3" methods="0" coveredmethods="0"/>
         <line num="4" count="1" type="stmt"/>
@@ -285,17 +285,17 @@
         <line num="13" count="1" type="stmt"/>
       </file>
       <file name="validation.ts" path="C:\Users\Milton\Documents\DEV272\dev272-group-project\utils\validation.ts">
-        <metrics statements="10" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="11" count="0" type="stmt"/>
-        <line num="13" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="14" count="0" type="stmt"/>
-        <line num="17" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="18" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="19" count="0" type="stmt"/>
-        <line num="21" count="0" type="stmt"/>
-        <line num="22" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="23" count="0" type="stmt"/>
-        <line num="28" count="0" type="stmt"/>
+        <metrics statements="10" coveredstatements="10" conditionals="8" coveredconditionals="8" methods="1" coveredmethods="1"/>
+        <line num="11" count="6" type="stmt"/>
+        <line num="13" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="17" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="22" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="28" count="6" type="stmt"/>
       </file>
     </package>
   </project>
