@@ -1,5 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { generateStoreLinks } from '@/utils/GenerateStoreLink';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
 import {
+  ActivityIndicator,
+  Alert,
+  Image,
   Linking,
   ScrollView,
   StyleSheet,
@@ -9,78 +15,150 @@ import {
 } from 'react-native';
 
 interface Supply {
-  id: string;
   name: string;
-  storeLinks: { name: string; url: string; price: number }[];
+  imageUri?: string;
 }
-
-const mockSupplies: Supply[] = [
-  {
-    id: 'supply-1',
-    name: 'Toilet Paper',
-    storeLinks: [
-      { name: 'Amazon', url: 'https://amazon.com', price: 8.99 },
-      { name: 'Walmart', url: 'https://walmart.com', price: 7.49 },
-    ],
-  },
-  {
-    id: 'supply-2',
-    name: 'Dish Soap',
-    storeLinks: [
-      { name: 'Target', url: 'https://target.com', price: 3.99 },
-      { name: 'Amazon', url: 'https://amazon.com', price: 4.29 },
-    ],
-  },
-];
 
 export default function ShopScreen() {
   const [supplies, setSupplies] = useState<Supply[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    // This should ideally load real data
-    setSupplies(mockSupplies);
-  }, []);
+  const loadSupplies = async () => {
+    setLoading(true);
+    try {
+      const data = await AsyncStorage.getItem('supplies');
+      setSupplies(data ? JSON.parse(data) : []);
+    } catch (error) {
+      console.error('Failed to load supplies from storage:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteSupply = async (index: number) => {
+    Alert.alert('Delete Supply', 'Are you sure you want to delete this item?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            const updatedSupplies = [...supplies];
+            updatedSupplies.splice(index, 1);
+            await AsyncStorage.setItem(
+              'supplies',
+              JSON.stringify(updatedSupplies),
+            );
+            setSupplies(updatedSupplies);
+          } catch (error) {
+            console.error('Failed to delete supply:', error);
+          }
+        },
+      },
+    ]);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      loadSupplies();
+    }, []),
+  );
 
   return (
-    <ScrollView style={{ padding: 16 }}>
-      <Text style={{ fontSize: 22, fontWeight: 'bold' }}>
-        🛒 Supply Shopping
-      </Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.heading}>🛒 Supply Shopping</Text>
 
-      {supplies.map(supply => (
-        <View key={supply.id} style={styles.card}>
-          <Text style={styles.title}>{supply.name}</Text>
-          {supply.storeLinks.map(link => (
-            <TouchableOpacity
-              key={link.name}
-              onPress={() => Linking.openURL(link.url)}
-              style={styles.storeLink}
-            >
-              <Text>
-                {link.name} - ${link.price.toFixed(2)}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      ))}
+      {loading ? (
+        <ActivityIndicator
+          size='large'
+          color='#555'
+          style={{ marginTop: 20 }}
+        />
+      ) : supplies.length === 0 ? (
+        <Text style={styles.emptyText}>No supplies added yet.</Text>
+      ) : (
+        supplies.map((supply, index) => {
+          const storeLinks = generateStoreLinks(supply.name);
+
+          return (
+            <View key={index} style={styles.card}>
+              <View style={styles.headerRow}>
+                <Text style={styles.title}>{supply.name}</Text>
+                <TouchableOpacity onPress={() => deleteSupply(index)}>
+                  <Text style={styles.deleteText}>🗑️</Text>
+                </TouchableOpacity>
+              </View>
+
+              {supply.imageUri && (
+                <Image
+                  source={{ uri: supply.imageUri }}
+                  style={styles.image}
+                  resizeMode='cover'
+                />
+              )}
+
+              {storeLinks.map(link => (
+                <TouchableOpacity
+                  key={link.name}
+                  onPress={() => Linking.openURL(link.url)}
+                  style={styles.linkButton}
+                >
+                  <Text style={styles.linkText}>Search on {link.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          );
+        })
+      )}
     </ScrollView>
   );
 }
-
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#fff',
-    marginTop: 16,
+  container: {
     padding: 16,
+  },
+  heading: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  emptyText: {
+    marginTop: 20,
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#6B7280',
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
+    padding: 16,
+    marginBottom: 16,
     elevation: 2,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 8,
   },
-  storeLink: {
-    paddingVertical: 4,
+  deleteText: {
+    fontSize: 20,
+    color: '#DC2626',
+  },
+  image: {
+    width: '100%',
+    height: 150,
+    borderRadius: 8,
+    marginVertical: 10,
+  },
+  linkButton: {
+    paddingVertical: 6,
+  },
+  linkText: {
+    color: '#2563EB',
+    fontSize: 16,
   },
 });

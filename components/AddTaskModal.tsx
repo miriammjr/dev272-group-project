@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useSupplyShoppingRedirect } from '@/hooks/useSupplyShoppingRedirect';
+import { TaskValidationErrors, validateTaskInput } from '@/utils/validation';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
+  Platform,
+  StyleSheet,
+  Switch,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  StyleSheet,
-  Switch,
-  Platform,
+
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { validateTaskInput, TaskValidationErrors } from '../utils/validation';
+
 
 interface AddTaskModalProps {
   visible: boolean;
@@ -29,6 +32,9 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
   onClose,
   onAddTask,
 }) => {
+  const { promptAndRedirect } = useSupplyShoppingRedirect();
+
+
   const [taskName, setTaskName] = useState('');
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
@@ -42,6 +48,19 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
   const [dateInput, setDateInput] = useState('');
   const [dateError, setDateError] = useState('');
 
+  useEffect(() => {
+    if (visible) {
+      const now = new Date();
+      setDate(now);
+      setDateInput(formatDate(now));
+
+      setErrors({ taskName: '', repeatDays: '' });
+
+      setDateError('');
+    }
+  }, [visible]);
+
+
   const formatDate = (date: Date) => {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
@@ -49,39 +68,29 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
     return `${month}-${day}-${year}`;
   };
 
-  useEffect(() => {
-    if (visible) {
-      const now = new Date();
-      setDate(now);
-      setDateInput(formatDate(now));
-      setDateError('');
-    }
-  }, [visible]);
-
-  const handleDateChange = (event: any, selectedDate?: Date) => {
+  const handleDateChange = (_: any, selectedDate?: Date) => {
     setShowPicker(false);
-    if (selectedDate) {
-      setDate(selectedDate);
-    }
+    if (selectedDate) setDate(selectedDate);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+
     const validationErrors = validateTaskInput(
       taskName,
       isRepeating,
       repeatDays,
     );
-    const hasError = Object.values(validationErrors).some(
-      error => error !== '',
-    );
 
+    const hasError = Object.values(validationErrors).some(e => e !== '');
     setErrors(validationErrors);
     if (hasError) return;
 
     const isoDueDate = date.toISOString();
     const repeatDaysInt = parseInt(repeatDays, 10);
 
-    onAddTask(
+
+    await onAddTask(
+
       taskName,
       isoDueDate,
       isRepeating,
@@ -89,13 +98,19 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
       taskType,
     );
 
-    setTaskName('');
-    setDate(new Date());
-    setIsRepeating(false);
-    setRepeatDays('');
-    setTaskType('chore');
-    setErrors({ taskName: '', repeatDays: '' });
+
     onClose();
+
+    // After modal closes, trigger shopping flow if it's a supply
+    if (taskType === 'supply') {
+      setTimeout(() => promptAndRedirect(taskName), 300);
+    }
+
+    // Reset fields
+    setTaskName('');
+    setRepeatDays('');
+    setIsRepeating(false);
+    setTaskType('chore');
   };
 
   return (
@@ -125,8 +140,10 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
               <TextInput
                 style={styles.input}
                 placeholder='Due Date (MM-DD-YYYY)'
-                placeholderTextColor='#9CA3AF'
+
                 value={dateInput}
+                placeholderTextColor='#9CA3AF'
+
                 onChangeText={text => {
                   setDateInput(text);
                   const [month, day, year] = text.split('-');
@@ -138,9 +155,11 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
                     setDate(parsedDate);
                     setDateError('');
                   } else {
+
                     setDateError(
                       'Please enter a valid date in MM-DD-YYYY format.',
                     );
+
                   }
                 }}
               />
@@ -151,6 +170,8 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
           ) : (
             <>
               <TouchableOpacity
+
+
                 onPress={() => setShowPicker(true)}
                 style={styles.input}
               >
@@ -159,6 +180,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
                 >
                   {formatDate(date) || 'Select Due Date'}
                 </Text>
+
               </TouchableOpacity>
               {showPicker && (
                 <DateTimePicker
@@ -190,7 +212,9 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
                         taskType === type && styles.typeButtonTextSelected,
                       ]}
                     >
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
+
+                      {type}
+
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -276,7 +300,6 @@ const styles = StyleSheet.create({
   rowContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     gap: 12,
   },
   taskTypeContainer: {
@@ -307,6 +330,9 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   switchRight: {
+
+    justifyContent: 'center',
+
     alignItems: 'flex-end',
   },
   switchLabel: {

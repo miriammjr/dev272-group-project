@@ -21,8 +21,8 @@ import AddTaskModal from '@/components/AddTaskModal';
 import TaskCardToggle from '@/components/TaskCardToggle';
 import { ThemedText } from '@/components/ThemedText';
 import { useAddTask } from '@/hooks/useAddTask';
-import { useTasks } from '@/hooks/useTasks';
 import { useDeleteTask } from '@/hooks/useDeleteTask';
+import { useTasks } from '@/hooks/useTasks';
 
 const getGreeting = () => {
   const hour = new Date().getHours();
