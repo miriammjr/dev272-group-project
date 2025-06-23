@@ -1,13 +1,23 @@
-import TaskCard from '@/components/TaskCard';
-import { useTasks } from '@/hooks/useTasks';
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
+import { useFocusEffect } from '@react-navigation/native';
+
+import TaskCard from '@/components/TaskCard';
+import { useTasks } from '@/hooks/useTasks';
 
 export default function CalendarScreen() {
   const { tasks, loading, error } = useTasks();
   const [selectedDate, setSelectedDate] = useState('');
   const [tasksOnDay, setTasksOnDay] = useState([]);
+
+  // Set current date when screen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      const today = new Date().toISOString().slice(0, 10);
+      setSelectedDate(today);
+    }, []),
+  );
 
   useEffect(() => {
     if (!selectedDate || !tasks.length) return;
