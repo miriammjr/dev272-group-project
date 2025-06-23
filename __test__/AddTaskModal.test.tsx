@@ -26,23 +26,40 @@ describe('AddTaskModal', () => {
   });
 
   it('renders correctly when visible', () => {
-    (validateTaskInput as jest.Mock).mockReturnValue({ taskName: '', repeatDays: '' });
+    (validateTaskInput as jest.Mock).mockReturnValue({
+      taskName: '',
+      repeatDays: '',
+    });
 
     const { getByPlaceholderText } = render(
-      <AddTaskModal visible={true} onClose={onCloseMock} onAddTask={onAddTaskMock} />
+      <AddTaskModal
+        visible={true}
+        onClose={onCloseMock}
+        onAddTask={onAddTaskMock}
+      />,
     );
 
     expect(getByPlaceholderText('Task Name (e.g., Buy milk)')).toBeTruthy();
   });
 
   it('calls onAddTask and onClose on valid submit', async () => {
-    (validateTaskInput as jest.Mock).mockReturnValue({ taskName: '', repeatDays: '' });
+    (validateTaskInput as jest.Mock).mockReturnValue({
+      taskName: '',
+      repeatDays: '',
+    });
 
     const { getByPlaceholderText, getByText } = render(
-      <AddTaskModal visible={true} onClose={onCloseMock} onAddTask={onAddTaskMock} />
+      <AddTaskModal
+        visible={true}
+        onClose={onCloseMock}
+        onAddTask={onAddTaskMock}
+      />,
     );
 
-    fireEvent.changeText(getByPlaceholderText('Task Name (e.g., Buy milk)'), 'Buy eggs');
+    fireEvent.changeText(
+      getByPlaceholderText('Task Name (e.g., Buy milk)'),
+      'Buy eggs',
+    );
     fireEvent.press(getByText('Add Task'));
 
     await waitFor(() => {
@@ -58,7 +75,11 @@ describe('AddTaskModal', () => {
     });
 
     const { getByText } = render(
-      <AddTaskModal visible={true} onClose={onCloseMock} onAddTask={onAddTaskMock} />
+      <AddTaskModal
+        visible={true}
+        onClose={onCloseMock}
+        onAddTask={onAddTaskMock}
+      />,
     );
 
     fireEvent.press(getByText('Add Task'));
@@ -70,13 +91,23 @@ describe('AddTaskModal', () => {
   });
 
   it('triggers promptAndRedirect for supply task', async () => {
-    (validateTaskInput as jest.Mock).mockReturnValue({ taskName: '', repeatDays: '' });
+    (validateTaskInput as jest.Mock).mockReturnValue({
+      taskName: '',
+      repeatDays: '',
+    });
 
     const { getByPlaceholderText, getByText } = render(
-      <AddTaskModal visible={true} onClose={onCloseMock} onAddTask={onAddTaskMock} />
+      <AddTaskModal
+        visible={true}
+        onClose={onCloseMock}
+        onAddTask={onAddTaskMock}
+      />,
     );
 
-    fireEvent.changeText(getByPlaceholderText('Task Name (e.g., Buy milk)'), 'Buy soap');
+    fireEvent.changeText(
+      getByPlaceholderText('Task Name (e.g., Buy milk)'),
+      'Buy soap',
+    );
     fireEvent.press(getByText('supply')); // switch task type
     fireEvent.press(getByText('Add Task'));
 
