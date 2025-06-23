@@ -1,5 +1,5 @@
-// jest.setup.js
 /* eslint-env jest */
+// jest.setup.js
 import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/async-storage-mock';
 process.env.EXPO_PUBLIC_SUPABASE_URL = 'http://localhost';
 process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY = 'fake-key';

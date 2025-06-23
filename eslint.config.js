@@ -23,7 +23,7 @@ module.exports = defineConfig([
     },
   },
   {
-    // ✅ Jest-specific config for test files
+    // ✅ Jest config for test files
     files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
     plugins: {
       jest,
@@ -40,6 +40,15 @@ module.exports = defineConfig([
     },
     rules: {
       ...jest.configs.recommended.rules,
+    },
+  },
+  {
+    // ✅ Jest config for setup files like jest.setup.js
+    files: ['jest.setup.js'],
+    languageOptions: {
+      globals: {
+        jest: true,
+      },
     },
   },
 ]);
