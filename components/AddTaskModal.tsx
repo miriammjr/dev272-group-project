@@ -11,9 +11,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-
 } from 'react-native';
-
 
 interface AddTaskModalProps {
   visible: boolean;
@@ -33,7 +31,6 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
   onAddTask,
 }) => {
   const { promptAndRedirect } = useSupplyShoppingRedirect();
-
 
   const [taskName, setTaskName] = useState('');
   const [date, setDate] = useState(new Date());
@@ -60,7 +57,6 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
     }
   }, [visible]);
 
-
   const formatDate = (date: Date) => {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
@@ -74,7 +70,6 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
   };
 
   const handleSubmit = async () => {
-
     const validationErrors = validateTaskInput(
       taskName,
       isRepeating,
@@ -88,16 +83,13 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
     const isoDueDate = date.toISOString();
     const repeatDaysInt = parseInt(repeatDays, 10);
 
-
     await onAddTask(
-
       taskName,
       isoDueDate,
       isRepeating,
       isRepeating ? repeatDaysInt : null,
       taskType,
     );
-
 
     onClose();
 
@@ -140,10 +132,8 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
               <TextInput
                 style={styles.input}
                 placeholder='Due Date (MM-DD-YYYY)'
-
                 value={dateInput}
                 placeholderTextColor='#9CA3AF'
-
                 onChangeText={text => {
                   setDateInput(text);
                   const [month, day, year] = text.split('-');
@@ -155,11 +145,9 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
                     setDate(parsedDate);
                     setDateError('');
                   } else {
-
                     setDateError(
                       'Please enter a valid date in MM-DD-YYYY format.',
                     );
-
                   }
                 }}
               />
@@ -170,8 +158,6 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
           ) : (
             <>
               <TouchableOpacity
-
-
                 onPress={() => setShowPicker(true)}
                 style={styles.input}
               >
@@ -180,7 +166,6 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
                 >
                   {formatDate(date) || 'Select Due Date'}
                 </Text>
-
               </TouchableOpacity>
               {showPicker && (
                 <DateTimePicker
@@ -212,9 +197,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
                         taskType === type && styles.typeButtonTextSelected,
                       ]}
                     >
-
                       {type}
-
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -330,7 +313,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   switchRight: {
-
     justifyContent: 'center',
 
     alignItems: 'flex-end',

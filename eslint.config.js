@@ -1,7 +1,7 @@
-// https://docs.expo.dev/guides/using-eslint/
 const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
 const prettier = require('eslint-plugin-prettier');
+const jest = require('eslint-plugin-jest');
 
 module.exports = defineConfig([
   expoConfig,
@@ -20,6 +20,26 @@ module.exports = defineConfig([
     rules: {
       'prettier/prettier': 'error',
       semi: ['warn', 'always'],
+    },
+  },
+  {
+    // ✅ Jest-specific config for test files
+    files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+    plugins: {
+      jest,
+    },
+    languageOptions: {
+      globals: {
+        jest: true,
+        describe: true,
+        it: true,
+        expect: true,
+        beforeEach: true,
+        afterEach: true,
+      },
+    },
+    rules: {
+      ...jest.configs.recommended.rules,
     },
   },
 ]);
