@@ -28,7 +28,6 @@
 - [] user flow diagrams
 
   In the .md file:
-
   - [] team member names + assigned roles
   - [] problem the app will solve
   - [] target users and user personas

@@ -1,4 +1,3 @@
-
 import { useCallback } from 'react';
 import { supabase } from '@/utils/supabase';
 export const useDeleteTask = () => {
