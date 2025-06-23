@@ -16,7 +16,7 @@ export default function CalendarScreen() {
     React.useCallback(() => {
       const today = new Date().toISOString().slice(0, 10);
       setSelectedDate(today);
-    }, [])
+    }, []),
   );
 
   useEffect(() => {
