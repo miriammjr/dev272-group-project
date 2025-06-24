@@ -5,4 +5,4 @@ npx prettier --write .
 npx eslint . --fix
 
 # Jest test and coverage
-npm test
+npx jest --coverage
