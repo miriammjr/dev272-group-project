@@ -45,9 +45,13 @@ export default function ForecastScreen() {
 
       <View style={styles.section}>
         {loading && (
-          <ActivityIndicator size="large" color="#3B82F6" style={styles.loader} />
+          <ActivityIndicator
+            size='large'
+            color='#3B82F6'
+            style={styles.loader}
+          />
         )}
-        {error && <ThemedText type="error">{error}</ThemedText>}
+        {error && <ThemedText type='error'>{error}</ThemedText>}
 
         {!loading && filteredTasks.length === 0 && (
           <View style={styles.emptyState}>
