@@ -1,8 +1,3 @@
-import { supabase } from '@/utils/supabase';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import * as Notifications from 'expo-notifications';
-import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
@@ -15,6 +10,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import * as Notifications from 'expo-notifications';
+import { router } from 'expo-router';
+import { supabase } from '@/utils/supabase';
 
 export default function SettingsScreen() {
   const [email, setEmail] = useState('');
@@ -164,7 +164,6 @@ export default function SettingsScreen() {
         <Pressable
           style={styles.timeBox}
           onPress={() => setShowTimePicker(true)}
-          accessibilityHint='Time Picker Button'
         >
           <Text style={styles.timeText}>
             {reminderTime.toLocaleTimeString([], {
@@ -181,7 +180,6 @@ export default function SettingsScreen() {
             is24Hour={true}
             display='default'
             onChange={onTimeChange}
-            accessibilityHint='Time Picker'
           />
         )}
 

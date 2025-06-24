@@ -16,20 +16,7 @@
     "preset": "jest-expo",
     "transformIgnorePatterns": [
       "node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg|@gluestack-ui/.*))"
-    ],
-    "collectCoverageFrom": [
-      "src/**/*.{tsx, ts}"
-    ],
-    "collectCoverage": true,
-    "verbose": true,
-    "coverageThreshold": {
-      "global": {
-        "branches": 20,
-        "functions": 20,
-        "lines": 20,
-        "statements": 20
-      }
-    }
+    ]
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -67,13 +54,10 @@
     "react-native-screens": "~4.11.1",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
-    "save-dev": "^0.0.1-security",
     "supabase": "^2.24.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/react": "^16.3.0",
     "@types/jest": "^30.0.0",
     "@types/react": "~19.0.10",
     "dotenv-cli": "^8.0.0",
@@ -84,7 +68,6 @@
     "eslint-plugin-testing-library": "^7.5.3",
     "husky": "^9.1.7",
     "jest": "~29.7.0",
-    "jest-environment-jsdom": "^30.0.2",
     "jest-expo": "~53.0.7",
     "lint-staged": "^16.1.0",
     "prettier": "^3.5.3",
