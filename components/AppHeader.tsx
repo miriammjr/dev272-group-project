@@ -1,12 +1,26 @@
-// components/AppHeader.tsx
-
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useSegments } from 'expo-router';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { ThemedText } from './ThemedText';
+
 export default function AppHeader() {
   const router = useRouter();
+  const segments = useSegments();
+
+  const currentPage = segments[segments.length - 1] || 'home';
+  const capitalizedPage =
+    currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
+
+  const iconMap: Record<string, keyof typeof Ionicons.glyphMap> = {
+    home: 'home-outline',
+    calendar: 'calendar-outline',
+    forecast: 'cloud-outline',
+    shop: 'cart-outline',
+    settings: 'settings-outline',
+  };
+
+  const iconName = iconMap[currentPage] || 'apps-outline';
 
   return (
     <View
@@ -15,9 +29,26 @@ export default function AppHeader() {
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 16,
+        backgroundColor: '#FFFFFF',
+        borderBottomWidth: 1,
+        borderBottomColor: '#E5E7EB',
       }}
     >
-      <ThemedText type='title'>🏡 Resupply</ThemedText>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <ThemedText
+          type='title'
+          style={{ flexDirection: 'row', alignItems: 'center' }}
+        >
+          <Ionicons
+            name={iconName}
+            size={20}
+            color='#374151'
+            style={{ marginRight: 6 }}
+          />
+          Resupply : {capitalizedPage}
+        </ThemedText>
+      </View>
+
       <TouchableOpacity
         onPress={() => router.push('/settings')}
         accessibilityLabel='Settings'

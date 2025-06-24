@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useFocusEffect } from '@react-navigation/native';
@@ -8,13 +8,15 @@ import { useTasks } from '@/hooks/useTasks';
 
 export default function CalendarScreen() {
   const { tasks, loading, error } = useTasks();
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState(() =>
+    new Date().toLocaleDateString('en-CA'),
+  );
   const [tasksOnDay, setTasksOnDay] = useState([]);
 
-  // Set current date when screen is focused
+  // Update selected date when screen is focused
   useFocusEffect(
     React.useCallback(() => {
-      const today = new Date().toISOString().slice(0, 10);
+      const today = new Date().toLocaleDateString('en-CA');
       setSelectedDate(today);
     }, []),
   );
@@ -24,19 +26,19 @@ export default function CalendarScreen() {
 
     const tasksForDay = tasks.filter(task => {
       if (!task.dueDate) return false;
-      const taskDate = new Date(task.dueDate).toISOString().slice(0, 10);
+      const taskDate = new Date(task.dueDate).toLocaleDateString('en-CA');
       return taskDate === selectedDate;
     });
 
     setTasksOnDay(tasksForDay);
   }, [selectedDate, tasks]);
 
-  const getMarkedDates = () => {
+  const markedDates = useMemo(() => {
     const datesWithTasks: Record<string, any> = {};
 
     tasks.forEach(task => {
       if (task.dueDate) {
-        const dateStr = new Date(task.dueDate).toISOString().slice(0, 10);
+        const dateStr = new Date(task.dueDate).toLocaleDateString('en-CA');
         datesWithTasks[dateStr] = {
           marked: true,
           dotColor: '#FF9800',
@@ -53,14 +55,14 @@ export default function CalendarScreen() {
     }
 
     return datesWithTasks;
-  };
+  }, [tasks, selectedDate]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>📆 Calendar</Text>
       <Calendar
         onDayPress={day => setSelectedDate(day.dateString)}
-        markedDates={getMarkedDates()}
+        markedDates={markedDates}
       />
 
       <Text style={styles.sectionTitle}>

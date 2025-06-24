@@ -76,12 +76,9 @@ export default function Home() {
   };
 
   const handleDeleteTask = async (id: number) => {
-    console.log('Attempting to delete task with id:', id);
     const success = await deleteTask(id);
-    console.log('Delete task result:', success);
     if (success) {
       setTasks(prev => prev.filter(task => task.id !== id));
-      console.log('Task removed from local state:', id);
     } else {
       console.warn('Failed to delete task from Supabase:', id);
     }
@@ -242,14 +239,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F3F4F6',
   },
-  topHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 50,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
   scrollContainer: {
     paddingHorizontal: 16,
     paddingBottom: 100,
@@ -258,6 +247,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
+    marginTop: 16,
     marginBottom: 24,
   },
   greetingText: {
