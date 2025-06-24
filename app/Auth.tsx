@@ -37,10 +37,9 @@ export default function Auth() {
     if (error) {
       Alert.alert('Login Failed', error.message);
     } else {
-      router.replace('/redirect');
+      console.log('LOGGED IN');
+      router.replace('./index');
     }
-
-    console.log('LOGGED IN');
   }
 
   async function signUpWithEmail() {
