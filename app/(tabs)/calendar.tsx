@@ -68,7 +68,7 @@ export default function CalendarScreen() {
       </View>
 
       <View style={styles.section}>
-        <ThemedText type="subtitle" style={styles.sectionTitle}>
+        <ThemedText type='subtitle' style={styles.sectionTitle}>
           {selectedDate
             ? `📝 Tasks for ${selectedDate}`
             : 'Select a date to see tasks.'}
