@@ -9,9 +9,9 @@ import {
   Linking,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
+  Text,
 } from 'react-native';
 
 interface Supply {
@@ -65,62 +65,67 @@ export default function ShopScreen() {
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.heading}>🛒 Supply Shopping</Text>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.section}>
+        {loading ? (
+          <ActivityIndicator
+            size='large'
+            color='#555'
+            style={{ marginTop: 20 }}
+          />
+        ) : supplies.length === 0 ? (
+          <Text style={styles.emptyText}>No supplies added yet.</Text>
+        ) : (
+          supplies.map((supply, index) => {
+            const storeLinks = generateStoreLinks(supply.name);
 
-      {loading ? (
-        <ActivityIndicator
-          size='large'
-          color='#555'
-          style={{ marginTop: 20 }}
-        />
-      ) : supplies.length === 0 ? (
-        <Text style={styles.emptyText}>No supplies added yet.</Text>
-      ) : (
-        supplies.map((supply, index) => {
-          const storeLinks = generateStoreLinks(supply.name);
+            return (
+              <View key={index} style={styles.card}>
+                <View style={styles.headerRow}>
+                  <Text style={styles.title}>{supply.name}</Text>
+                  <TouchableOpacity onPress={() => deleteSupply(index)}>
+                    <Text style={styles.deleteText}>🗑️</Text>
+                  </TouchableOpacity>
+                </View>
 
-          return (
-            <View key={index} style={styles.card}>
-              <View style={styles.headerRow}>
-                <Text style={styles.title}>{supply.name}</Text>
-                <TouchableOpacity onPress={() => deleteSupply(index)}>
-                  <Text style={styles.deleteText}>🗑️</Text>
-                </TouchableOpacity>
+                {supply.imageUri && (
+                  <Image
+                    source={{ uri: supply.imageUri }}
+                    style={styles.image}
+                    resizeMode='cover'
+                  />
+                )}
+
+                {storeLinks.map(link => (
+                  <TouchableOpacity
+                    key={link.name}
+                    onPress={() => Linking.openURL(link.url)}
+                    style={styles.linkButton}
+                  >
+                    <Text style={styles.linkText}>Search on {link.name}</Text>
+                  </TouchableOpacity>
+                ))}
               </View>
-
-              {supply.imageUri && (
-                <Image
-                  source={{ uri: supply.imageUri }}
-                  style={styles.image}
-                  resizeMode='cover'
-                />
-              )}
-
-              {storeLinks.map(link => (
-                <TouchableOpacity
-                  key={link.name}
-                  onPress={() => Linking.openURL(link.url)}
-                  style={styles.linkButton}
-                >
-                  <Text style={styles.linkText}>Search on {link.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          );
-        })
-      )}
+            );
+          })
+        )}
+      </View>
     </ScrollView>
   );
 }
+
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
+  scrollContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 100,
+    backgroundColor: '#F3F4F6',
   },
-  heading: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  section: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 16,
+    marginBottom: 16,
   },
   emptyText: {
     marginTop: 20,
@@ -134,6 +139,10 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
   },
   headerRow: {
     flexDirection: 'row',
