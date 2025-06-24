@@ -9,7 +9,7 @@ import { useTasks } from '@/hooks/useTasks';
 export default function CalendarScreen() {
   const { tasks, loading, error } = useTasks();
   const [selectedDate, setSelectedDate] = useState(() =>
-    new Date().toLocaleDateString('en-CA')
+    new Date().toLocaleDateString('en-CA'),
   );
   const [tasksOnDay, setTasksOnDay] = useState([]);
 
@@ -18,7 +18,7 @@ export default function CalendarScreen() {
     React.useCallback(() => {
       const today = new Date().toLocaleDateString('en-CA');
       setSelectedDate(today);
-    }, [])
+    }, []),
   );
 
   useEffect(() => {

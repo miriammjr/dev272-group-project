@@ -9,7 +9,8 @@ export default function AppHeader() {
   const segments = useSegments();
 
   const currentPage = segments[segments.length - 1] || 'home';
-  const capitalizedPage = currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
+  const capitalizedPage =
+    currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
 
   const iconMap: Record<string, keyof typeof Ionicons.glyphMap> = {
     home: 'home-outline',
@@ -34,17 +35,25 @@ export default function AppHeader() {
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <ThemedText type="title" style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Ionicons name={iconName} size={20} color="#374151" style={{ marginRight: 6 }} />
+        <ThemedText
+          type='title'
+          style={{ flexDirection: 'row', alignItems: 'center' }}
+        >
+          <Ionicons
+            name={iconName}
+            size={20}
+            color='#374151'
+            style={{ marginRight: 6 }}
+          />
           Resupply : {capitalizedPage}
         </ThemedText>
       </View>
 
       <TouchableOpacity
         onPress={() => router.push('/settings')}
-        accessibilityLabel="Settings"
+        accessibilityLabel='Settings'
       >
-        <Ionicons name="settings-outline" size={24} color="#374151" />
+        <Ionicons name='settings-outline' size={24} color='#374151' />
       </TouchableOpacity>
     </View>
   );
