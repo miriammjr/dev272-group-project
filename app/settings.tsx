@@ -164,6 +164,7 @@ export default function SettingsScreen() {
         <Pressable
           style={styles.timeBox}
           onPress={() => setShowTimePicker(true)}
+          accessibilityHint='Time Picker Button'
         >
           <Text style={styles.timeText}>
             {reminderTime.toLocaleTimeString([], {
@@ -180,6 +181,7 @@ export default function SettingsScreen() {
             is24Hour={true}
             display='default'
             onChange={onTimeChange}
+            accessibilityHint='Time Picker'
           />
         )}
 
