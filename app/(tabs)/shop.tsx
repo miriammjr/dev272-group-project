@@ -45,7 +45,10 @@ export default function ShopScreen() {
           try {
             const updatedSupplies = [...supplies];
             updatedSupplies.splice(index, 1);
-            await AsyncStorage.setItem('supplies', JSON.stringify(updatedSupplies));
+            await AsyncStorage.setItem(
+              'supplies',
+              JSON.stringify(updatedSupplies),
+            );
             setSupplies(updatedSupplies);
           } catch (error) {
             console.error('Failed to delete supply:', error);
@@ -65,7 +68,11 @@ export default function ShopScreen() {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.section}>
         {loading ? (
-          <ActivityIndicator size="large" color="#555" style={{ marginTop: 20 }} />
+          <ActivityIndicator
+            size='large'
+            color='#555'
+            style={{ marginTop: 20 }}
+          />
         ) : supplies.length === 0 ? (
           <Text style={styles.emptyText}>No supplies added yet.</Text>
         ) : (
@@ -85,7 +92,7 @@ export default function ShopScreen() {
                   <Image
                     source={{ uri: supply.imageUri }}
                     style={styles.image}
-                    resizeMode="cover"
+                    resizeMode='cover'
                   />
                 )}
 
