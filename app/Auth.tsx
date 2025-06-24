@@ -125,6 +125,9 @@ export default function Auth() {
               name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
               size={22}
               color='#6B7280'
+              accessibilityHint={
+                isPasswordVisible ? 'Password Visible' : 'Password Hidden'
+              }
             />
           </Pressable>
         </View>

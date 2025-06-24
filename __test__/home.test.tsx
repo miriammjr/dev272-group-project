@@ -1,11 +1,22 @@
 // ✅ Mock Supabase before anything else
-import React from 'react';
-import { render, waitFor } from '@testing-library/react-native';
 import Home from '@/app/(tabs)/home';
 import * as useTasksHook from '@/hooks/useTasks';
+import { render, waitFor } from '@testing-library/react-native';
+import React from 'react';
 
-jest.mock('@/utils/supabase');
 jest.mock('@/hooks/useTasks');
+
+jest.mock('../utils/supabase', () => ({
+  supabase: {
+    auth: {
+      getUser: jest.fn(),
+    },
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn(),
+    })),
+  },
+}));
 
 const mockTasks = [
   {
