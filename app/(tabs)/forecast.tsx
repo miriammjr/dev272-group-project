@@ -13,6 +13,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  Text,
 } from 'react-native';
 
 export default function ForecastScreen() {
@@ -28,11 +29,8 @@ export default function ForecastScreen() {
   });
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <ThemedText type='title' style={styles.title}>
-          Forecast
-        </ThemedText>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.section}>
         <TouchableOpacity
           style={[styles.filterButton, filterNext7Days && styles.filterActive]}
           onPress={() => setFilterNext7Days(!filterNext7Days)}
@@ -45,55 +43,60 @@ export default function ForecastScreen() {
         </TouchableOpacity>
       </View>
 
-      {loading && (
-        <ActivityIndicator size='large' color='#3B82F6' style={styles.loader} />
-      )}
-      {error && <ThemedText type='error'>{error}</ThemedText>}
+      <View style={styles.section}>
+        {loading && (
+          <ActivityIndicator
+            size='large'
+            color='#3B82F6'
+            style={styles.loader}
+          />
+        )}
+        {error && <ThemedText type='error'>{error}</ThemedText>}
 
-      {!loading && filteredTasks.length === 0 && (
-        <View style={styles.emptyState}>
-          <ThemedText style={styles.emptyText}>
-            No tasks found in this range.
-          </ThemedText>
-        </View>
-      )}
-
-      {filteredTasks.map(task => {
-        const dueIn = formatDistanceToNowStrict(parseISO(task.dueDate), {
-          addSuffix: true,
-        });
-
-        return (
-          <View key={task.id} style={styles.card}>
-            <View style={styles.cardTop}>
-              <ThemedText style={styles.taskName}>{task.taskName}</ThemedText>
-              <View style={styles.badge}>
-                <ThemedText style={styles.badgeText}>
-                  Repeats every {task.repeatIn} days
-                </ThemedText>
-              </View>
-            </View>
-            <ThemedText style={styles.dueText}>Due {dueIn}</ThemedText>
+        {!loading && filteredTasks.length === 0 && (
+          <View style={styles.emptyState}>
+            <ThemedText style={styles.emptyText}>
+              No tasks found in this range.
+            </ThemedText>
           </View>
-        );
-      })}
+        )}
+
+        {filteredTasks.map(task => {
+          const dueIn = formatDistanceToNowStrict(parseISO(task.dueDate), {
+            addSuffix: true,
+          });
+
+          return (
+            <View key={task.id} style={styles.card}>
+              <View style={styles.cardTop}>
+                <ThemedText style={styles.taskName}>{task.taskName}</ThemedText>
+                <View style={styles.badge}>
+                  <ThemedText style={styles.badgeText}>
+                    Repeats every {task.repeatIn} days
+                  </ThemedText>
+                </View>
+              </View>
+              <ThemedText style={styles.dueText}>Due {dueIn}</ThemedText>
+            </View>
+          );
+        })}
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 24,
+  scrollContainer: {
     paddingHorizontal: 16,
-    backgroundColor: '#F9FAFB',
+    paddingBottom: 100,
+    backgroundColor: '#F3F4F6',
   },
-  header: {
+  section: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 16,
     marginBottom: 16,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    marginBottom: 4,
   },
   filterButton: {
     backgroundColor: '#E5E7EB',
