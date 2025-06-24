@@ -37,7 +37,7 @@ export default function Auth() {
     if (error) {
       Alert.alert('Login Failed', error.message);
     } else {
-      router.replace('/redirect');
+      router.replace('./index');
     }
 
     console.log('LOGGED IN');
@@ -125,6 +125,9 @@ export default function Auth() {
               name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
               size={22}
               color='#6B7280'
+              accessibilityHint={
+                isPasswordVisible ? 'Password Visible' : 'Password Hidden'
+              }
             />
           </Pressable>
         </View>
