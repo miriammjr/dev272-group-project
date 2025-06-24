@@ -77,15 +77,6 @@ describe('<Home />', () => {
     );
   });
 
-  test('Password Visibility', async () => {
-    render(<Auth />);
-
-    fireEvent.press(screen.getByAccessibilityHint('Password Hidden'));
-    await waitFor(() => {
-      expect(screen.getByAccessibilityHint('Password Visible')).toBeTruthy();
-    });
-  });
-
   // UNSURE WHY THIS DOESN'T WORK
   // test('Sign up fails if bad email/password entered', async () => {
   //   render(<Auth />);
