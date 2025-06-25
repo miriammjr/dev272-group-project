@@ -11,6 +11,7 @@ import {
   formatDistanceToNowStrict,
   isBefore,
   parseISO,
+  compareAsc,
 } from 'date-fns';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -28,9 +29,25 @@ export default function ForecastScreen() {
     }, [refetch]),
   );
 
-  const repeatingTasks = tasks.filter(task => task.repeatIn);
+  // Step 1: Filter to only repeating and uncompleted tasks
+  const uncompletedRepeatingTasks = tasks.filter(
+    task => task.repeatIn && !task.completed
+  );
 
-  const filteredTasks = repeatingTasks.filter(task => {
+  // Step 2: Group by taskName and keep only the soonest due task
+  const latestTasksMap = new Map();
+
+  uncompletedRepeatingTasks.forEach(task => {
+    const existing = latestTasksMap.get(task.taskName);
+    const dueDate = parseISO(task.dueDate);
+
+    if (!existing || compareAsc(dueDate, parseISO(existing.dueDate)) < 0) {
+      latestTasksMap.set(task.taskName, task);
+    }
+  });
+
+  // Step 3: Convert to array and apply 7-day filter if needed
+  const filteredTasks = Array.from(latestTasksMap.values()).filter(task => {
     if (!filterNext7Days) return true;
     const dueDate = parseISO(task.dueDate);
     return isBefore(dueDate, addDays(new Date(), 7));
@@ -62,12 +79,12 @@ export default function ForecastScreen() {
       <View style={sharedStyles.section}>
         {loading && (
           <ActivityIndicator
-            size='large'
-            color='#3B82F6'
+            size="large"
+            color="#3B82F6"
             style={sharedStyles.loader}
           />
         )}
-        {error && <ThemedText type='error'>{error}</ThemedText>}
+        {error && <ThemedText type="error">{error}</ThemedText>}
 
         {!loading && filteredTasks.length === 0 && (
           <View style={sharedStyles.emptyState}>
