@@ -15,16 +15,18 @@ export default function App() {
       }
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session) {
-        console.log('logging in');
-        router.replace('/(tabs)/home');
-      } else {
-        console.log('LOGGED OUT');
-        router.replace('/Auth');
-      }
-    });
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+        if (session) {
+          console.log('logging in');
+          router.replace('/(tabs)/home');
+        } else {
+          console.log('LOGGED OUT');
+          router.replace('/Auth');
+        }
+      },
+    );
 
     return () => {
       listener?.subscription.unsubscribe();

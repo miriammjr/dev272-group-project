@@ -98,7 +98,7 @@ export const styles = StyleSheet.create({
     ...sharedStyles.card,
     marginVertical: 4,
     marginLeft: 8,
-    marginRight: 8
+    marginRight: 8,
   },
   sectionHeader: {
     flexDirection: 'row',

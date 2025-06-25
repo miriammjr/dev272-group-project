@@ -32,16 +32,20 @@ const TaskSection: React.FC<TaskSectionProps> = ({
   return (
     <View style={sharedStyles.section}>
       <View style={sharedStyles.sectionHeader}>
-        <ThemedText type="subtitle">{title}</ThemedText>
+        <ThemedText type='subtitle'>{title}</ThemedText>
         <View style={sharedStyles.taskCountBadge}>
-          <ThemedText style={sharedStyles.taskCountText}>{tasks.length}</ThemedText>
+          <ThemedText style={sharedStyles.taskCountText}>
+            {tasks.length}
+          </ThemedText>
         </View>
       </View>
 
       {tasks.length === 0 ? (
-        <ThemedText style={sharedStyles.emptyText}>No tasks in this section.</ThemedText>
+        <ThemedText style={sharedStyles.emptyText}>
+          No tasks in this section.
+        </ThemedText>
       ) : (
-        tasks.map((task) => (
+        tasks.map(task => (
           <TaskCardToggle
             key={task.id}
             task={task}

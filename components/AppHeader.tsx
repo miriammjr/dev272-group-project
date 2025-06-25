@@ -42,13 +42,13 @@ export default function AppHeader() {
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <ThemedText
-            type="title"
+            type='title'
             style={{ flexDirection: 'row', alignItems: 'center' }}
           >
             <Ionicons
               name={iconName}
               size={20}
-              color="#374151"
+              color='#374151'
               style={{ marginRight: 6 }}
             />
             Resupply : {capitalizedPage}
@@ -57,9 +57,9 @@ export default function AppHeader() {
 
         <TouchableOpacity
           onPress={() => router.push('/settings')}
-          accessibilityLabel="Settings"
+          accessibilityLabel='Settings'
         >
-          <Ionicons name="settings-outline" size={24} color="#374151" />
+          <Ionicons name='settings-outline' size={24} color='#374151' />
         </TouchableOpacity>
       </View>
     </SafeAreaView>

@@ -70,7 +70,7 @@ export default function TaskCardToggle({
           const previousDueDate = new Date(task.dueDate);
           const actualInterval = Math.max(
             1,
-            differenceInDays(completionDate, previousDueDate)
+            differenceInDays(completionDate, previousDueDate),
           );
           const newRepeatIn = Math.round((actualInterval + task.repeatIn) / 2);
           const nextDueDate = getNextDueDate(newRepeatIn);
@@ -109,7 +109,9 @@ export default function TaskCardToggle({
 
   return (
     <View style={sharedStyles.taskToggleCard}>
-      <ThemedText style={sharedStyles.taskToggleName}>{task.taskName}</ThemedText>
+      <ThemedText style={sharedStyles.taskToggleName}>
+        {task.taskName}
+      </ThemedText>
       <ThemedText style={sharedStyles.taskToggleDue}>
         Due: {task.dueDate.slice(0, 10)}
       </ThemedText>
@@ -118,7 +120,7 @@ export default function TaskCardToggle({
           title={task.completed ? 'Undo' : 'Complete'}
           onPress={handleToggle}
         />
-        <Button title="Delete" color="red" onPress={handleDelete} />
+        <Button title='Delete' color='red' onPress={handleDelete} />
       </View>
     </View>
   );

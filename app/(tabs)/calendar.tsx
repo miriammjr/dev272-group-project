@@ -1,11 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  FlatList,
-  Platform,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { FlatList, Platform, ScrollView, Text, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -17,7 +11,7 @@ import { styles as sharedStyles } from '@/styles/styles';
 export default function CalendarScreen() {
   const { tasks, loading, error } = useTasks();
   const [selectedDate, setSelectedDate] = useState(() =>
-    new Date().toLocaleDateString('en-CA')
+    new Date().toLocaleDateString('en-CA'),
   );
   const [tasksOnDay, setTasksOnDay] = useState([]);
 
@@ -25,7 +19,7 @@ export default function CalendarScreen() {
     React.useCallback(() => {
       const today = new Date().toLocaleDateString('en-CA');
       setSelectedDate(today);
-    }, [])
+    }, []),
   );
 
   useEffect(() => {
@@ -67,7 +61,9 @@ export default function CalendarScreen() {
   return (
     <ScrollView
       style={Platform.OS === 'web' ? sharedStyles.scrollContainer : undefined}
-      contentContainerStyle={Platform.OS === 'web' ? sharedStyles.scrollContent : undefined}
+      contentContainerStyle={
+        Platform.OS === 'web' ? sharedStyles.scrollContent : undefined
+      }
     >
       <View style={sharedStyles.section}>
         <Calendar
@@ -78,7 +74,7 @@ export default function CalendarScreen() {
       </View>
 
       <View style={sharedStyles.section}>
-        <ThemedText type="subtitle" style={sharedStyles.sectionTitle}>
+        <ThemedText type='subtitle' style={sharedStyles.sectionTitle}>
           {selectedDate
             ? `📝 Tasks for ${selectedDate}`
             : 'Select a date to see tasks.'}

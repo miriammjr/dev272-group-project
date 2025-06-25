@@ -118,7 +118,10 @@ export default function Home() {
 
     return {
       sections: [
-        { title: 'Due Today', data: [...overdue, ...today].sort(sortByDueDate) },
+        {
+          title: 'Due Today',
+          data: [...overdue, ...today].sort(sortByDueDate),
+        },
         { title: 'Due This Week', data: week.sort(sortByDueDate) },
         { title: 'Due This Month', data: month.sort(sortByDueDate) },
         { title: 'Completed', data: completed.sort(sortByDueDate) },
@@ -127,13 +130,18 @@ export default function Home() {
     };
   };
 
-  const { sections, overdueCount } = useMemo(() => categorizeTasks(tasks), [tasks]);
+  const { sections, overdueCount } = useMemo(
+    () => categorizeTasks(tasks),
+    [tasks],
+  );
 
   return (
     <>
       <ScrollView
         style={Platform.OS === 'web' ? sharedStyles.scrollContainer : undefined}
-        contentContainerStyle={Platform.OS === 'web' ? sharedStyles.scrollContent : undefined}
+        contentContainerStyle={
+          Platform.OS === 'web' ? sharedStyles.scrollContent : undefined
+        }
       >
         {loading ? (
           <Text>Loading...</Text>
@@ -142,7 +150,7 @@ export default function Home() {
         ) : (
           <>
             <View style={sharedStyles.section}>
-              <ThemedText type="title" style={sharedStyles.greetingText}>
+              <ThemedText type='title' style={sharedStyles.greetingText}>
                 {getGreeting()}
               </ThemedText>
               <ThemedText style={sharedStyles.subGreetingText}>
@@ -154,7 +162,9 @@ export default function Home() {
                   <ThemedText style={sharedStyles.statNumber}>
                     {sections[1].data.length}
                   </ThemedText>
-                  <ThemedText style={sharedStyles.statLabel}>Due this week</ThemedText>
+                  <ThemedText style={sharedStyles.statLabel}>
+                    Due this week
+                  </ThemedText>
                 </View>
                 <View style={sharedStyles.statCard}>
                   <ThemedText
@@ -165,12 +175,15 @@ export default function Home() {
                   >
                     {overdueCount}
                   </ThemedText>
-                  <ThemedText style={sharedStyles.statLabel}>Overdue</ThemedText>
+                  <ThemedText style={sharedStyles.statLabel}>
+                    Overdue
+                  </ThemedText>
                 </View>
               </View>
 
               <ThemedText style={sharedStyles.progressLabel}>
-                Monthly Progress: {sections[3].data.length} / {tasks.length} tasks
+                Monthly Progress: {sections[3].data.length} / {tasks.length}{' '}
+                tasks
               </ThemedText>
               <View style={sharedStyles.progressContainer}>
                 <View
@@ -188,7 +201,7 @@ export default function Home() {
               </View>
             </View>
 
-            {sections.map((section) => (
+            {sections.map(section => (
               <TaskSection
                 key={section.title}
                 title={section.title}
@@ -205,7 +218,7 @@ export default function Home() {
         style={sharedStyles.addButtonBottom}
         onPress={() => setModalVisible(true)}
       >
-        <Ionicons name="add" size={24} color="#fff" />
+        <Ionicons name='add' size={24} color='#fff' />
         <Text style={sharedStyles.addButtonText}>Add Task</Text>
       </TouchableOpacity>
 
