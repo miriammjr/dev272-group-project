@@ -1,20 +1,22 @@
-import { ThemedText } from '@/components/ThemedText';
-import { useTasks } from '@/hooks/useTasks';
+import React, { useState } from 'react';
+import {
+  ActivityIndicator,
+  ScrollView,
+  TouchableOpacity,
+  View,
+  Text,
+  Platform,
+} from 'react-native';
 import {
   addDays,
   formatDistanceToNowStrict,
   isBefore,
   parseISO,
 } from 'date-fns';
-import React, { useState } from 'react';
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Text,
-} from 'react-native';
+
+import { ThemedText } from '@/components/ThemedText';
+import { useTasks } from '@/hooks/useTasks';
+import { styles as sharedStyles } from '@/styles/styles';
 
 export default function ForecastScreen() {
   const { tasks, loading, error } = useTasks();
@@ -29,13 +31,21 @@ export default function ForecastScreen() {
   });
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.section}>
+    <ScrollView
+      style={Platform.OS === 'web' ? sharedStyles.scrollContainer : undefined}
+      contentContainerStyle={
+        Platform.OS === 'web' ? sharedStyles.scrollContent : undefined
+      }
+    >
+      <View style={sharedStyles.section}>
         <TouchableOpacity
-          style={[styles.filterButton, filterNext7Days && styles.filterActive]}
+          style={[
+            sharedStyles.filterButton,
+            filterNext7Days && sharedStyles.filterActive,
+          ]}
           onPress={() => setFilterNext7Days(!filterNext7Days)}
         >
-          <ThemedText style={styles.filterText}>
+          <ThemedText style={sharedStyles.filterText}>
             {filterNext7Days
               ? 'Showing: Next 7 Days'
               : 'Showing: All Repeating Tasks'}
@@ -43,19 +53,19 @@ export default function ForecastScreen() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.section}>
+      <View style={sharedStyles.section}>
         {loading && (
           <ActivityIndicator
-            size='large'
-            color='#3B82F6'
-            style={styles.loader}
+            size="large"
+            color="#3B82F6"
+            style={sharedStyles.loader}
           />
         )}
-        {error && <ThemedText type='error'>{error}</ThemedText>}
+        {error && <ThemedText type="error">{error}</ThemedText>}
 
         {!loading && filteredTasks.length === 0 && (
-          <View style={styles.emptyState}>
-            <ThemedText style={styles.emptyText}>
+          <View style={sharedStyles.emptyState}>
+            <ThemedText style={sharedStyles.emptyText}>
               No tasks found in this range.
             </ThemedText>
           </View>
@@ -67,16 +77,20 @@ export default function ForecastScreen() {
           });
 
           return (
-            <View key={task.id} style={styles.card}>
-              <View style={styles.cardTop}>
-                <ThemedText style={styles.taskName}>{task.taskName}</ThemedText>
-                <View style={styles.badge}>
-                  <ThemedText style={styles.badgeText}>
+            <View key={task.id} style={sharedStyles.taskCard}>
+              <View style={sharedStyles.cardTop}>
+                <ThemedText style={sharedStyles.taskCardName}>
+                  {task.taskName}
+                </ThemedText>
+                <View style={sharedStyles.badge}>
+                  <ThemedText style={sharedStyles.badgeText}>
                     Repeats every {task.repeatIn} days
                   </ThemedText>
                 </View>
               </View>
-              <ThemedText style={styles.dueText}>Due {dueIn}</ThemedText>
+              <ThemedText style={sharedStyles.taskCardText}>
+                Due {dueIn}
+              </ThemedText>
             </View>
           );
         })}
@@ -84,79 +98,3 @@ export default function ForecastScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 100,
-    backgroundColor: '#F3F4F6',
-  },
-  section: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 16,
-    marginBottom: 16,
-  },
-  filterButton: {
-    backgroundColor: '#E5E7EB',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    alignSelf: 'flex-start',
-  },
-  filterActive: {
-    backgroundColor: '#3B82F6',
-  },
-  filterText: {
-    color: '#111827',
-    fontSize: 13,
-  },
-  loader: {
-    marginTop: 20,
-  },
-  emptyState: {
-    marginTop: 40,
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#9CA3AF',
-  },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  cardTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  taskName: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  badge: {
-    backgroundColor: '#D1FAE5',
-    borderRadius: 10,
-    paddingVertical: 2,
-    paddingHorizontal: 8,
-  },
-  badgeText: {
-    fontSize: 12,
-    color: '#047857',
-  },
-  dueText: {
-    fontSize: 14,
-    color: '#6B7280',
-  },
-});

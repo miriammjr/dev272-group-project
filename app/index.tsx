@@ -6,19 +6,17 @@ import { supabase } from '../utils/supabase';
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
 
-  console.log('IN THE INDEX');
-
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      // setSession(session);
+      setSession(session);
       if (session) {
         console.log('apparently im logged in');
         router.replace('/(tabs)/home');
       }
     });
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      // setSession(session);
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
       if (session) {
         console.log('logging in');
         router.replace('/(tabs)/home');
@@ -27,5 +25,11 @@ export default function App() {
         router.replace('/Auth');
       }
     });
+
+    return () => {
+      listener?.subscription.unsubscribe();
+    };
   }, []);
+
+  return null;
 }

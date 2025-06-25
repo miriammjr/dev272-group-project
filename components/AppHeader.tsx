@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useSegments } from 'expo-router';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from './ThemedText';
 
 export default function AppHeader() {
@@ -23,38 +24,44 @@ export default function AppHeader() {
   const iconName = iconMap[currentPage] || 'apps-outline';
 
   return (
-    <View
+    <SafeAreaView
       style={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 16,
         backgroundColor: '#FFFFFF',
-        borderBottomWidth: 1,
-        borderBottomColor: '#E5E7EB',
       }}
+      edges={['top']}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <ThemedText
-          type='title'
-          style={{ flexDirection: 'row', alignItems: 'center' }}
-        >
-          <Ionicons
-            name={iconName}
-            size={20}
-            color='#374151'
-            style={{ marginRight: 6 }}
-          />
-          Resupply : {capitalizedPage}
-        </ThemedText>
-      </View>
-
-      <TouchableOpacity
-        onPress={() => router.push('/settings')}
-        accessibilityLabel='Settings'
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: 16,
+          borderBottomWidth: 1,
+          borderBottomColor: '#E5E7EB',
+        }}
       >
-        <Ionicons name='settings-outline' size={24} color='#374151' />
-      </TouchableOpacity>
-    </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <ThemedText
+            type="title"
+            style={{ flexDirection: 'row', alignItems: 'center' }}
+          >
+            <Ionicons
+              name={iconName}
+              size={20}
+              color="#374151"
+              style={{ marginRight: 6 }}
+            />
+            Resupply : {capitalizedPage}
+          </ThemedText>
+        </View>
+
+        <TouchableOpacity
+          onPress={() => router.push('/settings')}
+          accessibilityLabel="Settings"
+        >
+          <Ionicons name="settings-outline" size={24} color="#374151" />
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }

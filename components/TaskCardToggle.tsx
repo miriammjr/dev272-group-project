@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, Alert } from 'react-native';
-import { supabase } from '../utils/supabase';
+import { View, Button, Alert } from 'react-native';
 import { differenceInDays } from 'date-fns';
+import { ThemedText } from './ThemedText';
+import { supabase } from '@/utils/supabase';
+import { styles as sharedStyles } from '@/styles/styles';
 
 type Task = {
   id: number;
@@ -68,7 +70,7 @@ export default function TaskCardToggle({
           const previousDueDate = new Date(task.dueDate);
           const actualInterval = Math.max(
             1,
-            differenceInDays(completionDate, previousDueDate),
+            differenceInDays(completionDate, previousDueDate)
           );
           const newRepeatIn = Math.round((actualInterval + task.repeatIn) / 2);
           const nextDueDate = getNextDueDate(newRepeatIn);
@@ -89,12 +91,7 @@ export default function TaskCardToggle({
             ]);
 
           if (insertError) {
-            console.error('Failed to create repeated task:', {
-              message: insertError.message,
-              details: insertError.details,
-              hint: insertError.hint,
-              code: insertError.code,
-            });
+            console.error('Failed to create repeated task:', insertError);
           }
         } else {
           console.log('Repeat task already exists. Skipping insert.');
@@ -111,40 +108,18 @@ export default function TaskCardToggle({
   };
 
   return (
-    <View style={styles.card}>
-      <Text style={styles.taskName}>{task.taskName}</Text>
-      <Text style={styles.dueDate}>Due: {task.dueDate.slice(0, 10)}</Text>
-      <View style={styles.actions}>
+    <View style={sharedStyles.taskToggleCard}>
+      <ThemedText style={sharedStyles.taskToggleName}>{task.taskName}</ThemedText>
+      <ThemedText style={sharedStyles.taskToggleDue}>
+        Due: {task.dueDate.slice(0, 10)}
+      </ThemedText>
+      <View style={sharedStyles.taskToggleActions}>
         <Button
           title={task.completed ? 'Undo' : 'Complete'}
           onPress={handleToggle}
         />
-        <Button title='Delete' color='red' onPress={handleDelete} />
+        <Button title="Delete" color="red" onPress={handleDelete} />
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#fff',
-    padding: 16,
-    marginVertical: 8,
-    borderRadius: 8,
-    elevation: 2,
-  },
-  taskName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  dueDate: {
-    fontSize: 14,
-    color: '#666',
-    marginVertical: 4,
-  },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 8,
-  },
-});
