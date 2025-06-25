@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1750876352178" clover="3.2.0">
-  <project timestamp="1750876352178" name="All files">
+<coverage generated="1750876472760" clover="3.2.0">
+  <project timestamp="1750876472760" name="All files">
     <metrics statements="359" coveredstatements="225" conditionals="237" coveredconditionals="114" methods="75" coveredmethods="48" elements="671" coveredelements="387" complexity="0" loc="359" ncloc="359" packages="7" files="19" classes="19"/>
     <package name="app">
       <metrics statements="83" coveredstatements="56" conditionals="50" coveredconditionals="27" methods="13" coveredmethods="9"/>
@@ -128,17 +128,17 @@
       </file>
       <file name="forecast.tsx" path="C:\Users\Milton\Documents\DEV272\dev272-group-project\app\(tabs)\forecast.tsx">
         <metrics statements="11" coveredstatements="5" conditionals="17" coveredconditionals="10" methods="5" coveredmethods="2"/>
+        <line num="21" count="1" type="stmt"/>
         <line num="22" count="1" type="stmt"/>
-        <line num="23" count="1" type="stmt"/>
-        <line num="25" count="2" type="stmt"/>
-        <line num="27" count="1" type="stmt"/>
-        <line num="28" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="27" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="28" count="0" type="stmt"/>
         <line num="29" count="0" type="stmt"/>
-        <line num="30" count="0" type="stmt"/>
-        <line num="33" count="1" type="stmt"/>
-        <line num="46" count="0" type="stmt"/>
-        <line num="75" count="0" type="stmt"/>
-        <line num="79" count="0" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
       </file>
       <file name="home.tsx" path="C:\Users\Milton\Documents\DEV272\dev272-group-project\app\(tabs)\home.tsx">
         <metrics statements="50" coveredstatements="33" conditionals="36" coveredconditionals="13" methods="14" coveredmethods="8"/>
