@@ -166,11 +166,10 @@ export default function Auth() {
   );
 }
 
-// --- STYLESHEET ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#111827', // Dark blue-gray background
+    backgroundColor: '#111827',
     justifyContent: 'center',
     paddingHorizontal: 24,
   },
@@ -226,7 +225,7 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   button: {
-    backgroundColor: '#3B82F6', // Primary blue color
+    backgroundColor: '#3B82F6',
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',

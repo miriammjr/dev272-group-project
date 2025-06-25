@@ -1,18 +1,20 @@
-import { generateStoreLinks } from '@/utils/GenerateStoreLink';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
   Image,
   Linking,
+  Platform,
   ScrollView,
-  StyleSheet,
+  Text,
   TouchableOpacity,
   View,
-  Text,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+
+import { generateStoreLinks } from '@/utils/GenerateStoreLink';
+import { styles as sharedStyles } from '@/styles/styles';
 
 interface Supply {
   name: string;
@@ -65,8 +67,13 @@ export default function ShopScreen() {
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.section}>
+    <ScrollView
+      style={Platform.OS === 'web' ? sharedStyles.scrollContainer : undefined}
+      contentContainerStyle={
+        Platform.OS === 'web' ? sharedStyles.scrollContent : undefined
+      }
+    >
+      <View style={sharedStyles.section}>
         {loading ? (
           <ActivityIndicator
             size='large'
@@ -74,24 +81,24 @@ export default function ShopScreen() {
             style={{ marginTop: 20 }}
           />
         ) : supplies.length === 0 ? (
-          <Text style={styles.emptyText}>No supplies added yet.</Text>
+          <Text style={sharedStyles.shopEmptyText}>No supplies added yet.</Text>
         ) : (
           supplies.map((supply, index) => {
             const storeLinks = generateStoreLinks(supply.name);
 
             return (
-              <View key={index} style={styles.card}>
-                <View style={styles.headerRow}>
-                  <Text style={styles.title}>{supply.name}</Text>
+              <View key={index} style={sharedStyles.shopCard}>
+                <View style={sharedStyles.headerRow}>
+                  <Text style={sharedStyles.title}>{supply.name}</Text>
                   <TouchableOpacity onPress={() => deleteSupply(index)}>
-                    <Text style={styles.deleteText}>🗑️</Text>
+                    <Text style={sharedStyles.deleteText}>🗑️</Text>
                   </TouchableOpacity>
                 </View>
 
                 {supply.imageUri && (
                   <Image
                     source={{ uri: supply.imageUri }}
-                    style={styles.image}
+                    style={sharedStyles.image}
                     resizeMode='cover'
                   />
                 )}
@@ -100,9 +107,11 @@ export default function ShopScreen() {
                   <TouchableOpacity
                     key={link.name}
                     onPress={() => Linking.openURL(link.url)}
-                    style={styles.linkButton}
+                    style={sharedStyles.linkButton}
                   >
-                    <Text style={styles.linkText}>Search on {link.name}</Text>
+                    <Text style={sharedStyles.linkText}>
+                      Search on {link.name}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -113,61 +122,3 @@ export default function ShopScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 100,
-    backgroundColor: '#F3F4F6',
-  },
-  section: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 16,
-    marginBottom: 16,
-  },
-  emptyText: {
-    marginTop: 20,
-    textAlign: 'center',
-    fontSize: 16,
-    color: '#6B7280',
-  },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  deleteText: {
-    fontSize: 20,
-    color: '#DC2626',
-  },
-  image: {
-    width: '100%',
-    height: 150,
-    borderRadius: 8,
-    marginVertical: 10,
-  },
-  linkButton: {
-    paddingVertical: 6,
-  },
-  linkText: {
-    color: '#2563EB',
-    fontSize: 16,
-  },
-});

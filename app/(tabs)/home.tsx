@@ -1,24 +1,25 @@
-import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
-  differenceInDays,
-  isBefore,
-  isThisMonth,
-  isThisWeek,
-  isToday,
-  parseISO,
-  startOfToday,
-} from 'date-fns';
-import React, { useEffect, useState } from 'react';
-import {
+  Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import {
+  startOfToday,
+  parseISO,
+  isBefore,
+  isToday,
+  isThisWeek,
+  isThisMonth,
+  differenceInDays,
+} from 'date-fns';
 
+import { styles as sharedStyles } from '@/styles/styles';
 import AddTaskModal from '@/components/AddTaskModal';
-import TaskCardToggle from '@/components/TaskCardToggle';
+import TaskSection from '@/components/TaskSection';
 import { ThemedText } from '@/components/ThemedText';
 import { useAddTask } from '@/hooks/useAddTask';
 import { useDeleteTask } from '@/hooks/useDeleteTask';
@@ -116,91 +117,82 @@ export default function Home() {
       new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
 
     return {
-      today: [...overdue, ...today].sort(sortByDueDate),
-      week: week.sort(sortByDueDate),
-      month: month.sort(sortByDueDate),
-      completed: completed.sort(sortByDueDate),
+      sections: [
+        {
+          title: 'Due Today',
+          data: [...overdue, ...today].sort(sortByDueDate),
+        },
+        { title: 'Due This Week', data: week.sort(sortByDueDate) },
+        { title: 'Due This Month', data: month.sort(sortByDueDate) },
+        { title: 'Completed', data: completed.sort(sortByDueDate) },
+      ],
       overdueCount: overdue.length,
     };
   };
 
-  const { today, week, month, completed, overdueCount } =
-    categorizeTasks(tasks);
-
-  const renderSection = (title: string, tasksToRender: Task[]) => (
-    <View style={styles.section}>
-      <View style={styles.sectionHeader}>
-        <ThemedText type='subtitle'>{title}</ThemedText>
-        <View style={styles.taskCountBadge}>
-          <Text style={styles.taskCountText}>{tasksToRender.length}</Text>
-        </View>
-      </View>
-
-      {tasksToRender.length === 0 ? (
-        <Text style={styles.emptyText}>No tasks in this section.</Text>
-      ) : (
-        tasksToRender.map(task => (
-          <TaskCardToggle
-            key={task.id}
-            task={task}
-            onStatusChange={refetch}
-            onDelete={handleDeleteTask}
-          />
-        ))
-      )}
-    </View>
+  const { sections, overdueCount } = useMemo(
+    () => categorizeTasks(tasks),
+    [tasks],
   );
 
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <>
+      <ScrollView
+        style={Platform.OS === 'web' ? sharedStyles.scrollContainer : undefined}
+        contentContainerStyle={
+          Platform.OS === 'web' ? sharedStyles.scrollContent : undefined
+        }
+      >
         {loading ? (
           <Text>Loading...</Text>
         ) : error ? (
           <Text style={{ color: 'red', textAlign: 'center' }}>{error}</Text>
         ) : (
           <>
-            <View style={styles.dashboardContainer}>
-              <ThemedText type='title' style={styles.greetingText}>
+            <View style={sharedStyles.section}>
+              <ThemedText type='title' style={sharedStyles.greetingText}>
                 {getGreeting()}
               </ThemedText>
-              <ThemedText style={styles.subGreetingText}>
+              <ThemedText style={sharedStyles.subGreetingText}>
                 Here’s your summary for today.
               </ThemedText>
 
-              <View style={styles.statsRow}>
-                <View style={styles.statCard}>
-                  <ThemedText style={styles.statNumber}>
-                    {week.length}
+              <View style={sharedStyles.statsRow}>
+                <View style={sharedStyles.statCard}>
+                  <ThemedText style={sharedStyles.statNumber}>
+                    {sections[1].data.length}
                   </ThemedText>
-                  <ThemedText style={styles.statLabel}>
+                  <ThemedText style={sharedStyles.statLabel}>
                     Due this week
                   </ThemedText>
                 </View>
-                <View style={styles.statCard}>
+                <View style={sharedStyles.statCard}>
                   <ThemedText
                     style={[
-                      styles.statNumber,
-                      overdueCount > 0 && styles.overdueText,
+                      sharedStyles.statNumber,
+                      overdueCount > 0 && sharedStyles.overdueText,
                     ]}
                   >
                     {overdueCount}
                   </ThemedText>
-                  <ThemedText style={styles.statLabel}>Overdue</ThemedText>
+                  <ThemedText style={sharedStyles.statLabel}>
+                    Overdue
+                  </ThemedText>
                 </View>
               </View>
 
-              <ThemedText style={styles.progressLabel}>
-                Monthly Progress: {completed.length} / {tasks.length} tasks
+              <ThemedText style={sharedStyles.progressLabel}>
+                Monthly Progress: {sections[3].data.length} / {tasks.length}{' '}
+                tasks
               </ThemedText>
-              <View style={styles.progressContainer}>
+              <View style={sharedStyles.progressContainer}>
                 <View
                   style={[
-                    styles.progressBar,
+                    sharedStyles.progressBar,
                     {
                       width: `${
                         tasks.length > 0
-                          ? (completed.length / tasks.length) * 100
+                          ? (sections[3].data.length / tasks.length) * 100
                           : 0
                       }%`,
                     },
@@ -209,20 +201,25 @@ export default function Home() {
               </View>
             </View>
 
-            {renderSection('Due Today', today)}
-            {renderSection('Due This Week', week)}
-            {renderSection('Due This Month', month)}
-            {renderSection('Completed', completed)}
+            {sections.map(section => (
+              <TaskSection
+                key={section.title}
+                title={section.title}
+                tasks={section.data}
+                onStatusChange={refetch}
+                onDelete={handleDeleteTask}
+              />
+            ))}
           </>
         )}
       </ScrollView>
 
       <TouchableOpacity
-        style={styles.addButtonBottom}
+        style={sharedStyles.addButtonBottom}
         onPress={() => setModalVisible(true)}
       >
         <Ionicons name='add' size={24} color='#fff' />
-        <Text style={styles.addButtonText}>Add Task</Text>
+        <Text style={sharedStyles.addButtonText}>Add Task</Text>
       </TouchableOpacity>
 
       <AddTaskModal
@@ -230,128 +227,6 @@ export default function Home() {
         onClose={() => setModalVisible(false)}
         onAddTask={handleAddTask}
       />
-    </View>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F3F4F6',
-  },
-  scrollContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 100,
-  },
-  dashboardContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 16,
-    marginBottom: 24,
-  },
-  greetingText: {
-    fontSize: 26,
-    fontWeight: 'bold',
-  },
-  subGreetingText: {
-    fontSize: 16,
-    color: '#6B7280',
-    marginTop: 4,
-    marginBottom: 16,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 16,
-  },
-  statCard: {
-    alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    padding: 16,
-    borderRadius: 8,
-    flex: 1,
-    marginHorizontal: 4,
-  },
-  statNumber: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#111827',
-  },
-  overdueText: {
-    color: '#EF4444',
-  },
-  statLabel: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginTop: 2,
-  },
-  progressLabel: {
-    fontSize: 14,
-    color: '#374151',
-    marginBottom: 8,
-    fontWeight: '500',
-  },
-  progressContainer: {
-    height: 8,
-    backgroundColor: '#E5E7EB',
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  progressBar: {
-    height: '100%',
-    backgroundColor: '#3B82F6',
-  },
-  section: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  taskCountBadge: {
-    backgroundColor: '#E5E7EB',
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-  },
-  taskCountText: {
-    color: '#374151',
-    fontWeight: '600',
-    fontSize: 12,
-  },
-  emptyText: {
-    fontStyle: 'italic',
-    color: '#6B7280',
-    marginTop: 8,
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  addButtonBottom: {
-    position: 'absolute',
-    bottom: 30,
-    right: 20,
-    backgroundColor: '#2563EB',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 28,
-    flexDirection: 'row',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 8,
-  },
-  addButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 8,
-  },
-});
