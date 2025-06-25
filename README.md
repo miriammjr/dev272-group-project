@@ -17,9 +17,9 @@ To test, run `npm test` in the project directory.
 - User login allows data to be stored digitally and accessed from multiple devices.
 
 ## Team Contributions
-Jonathan - Supply, shop, and calendar screens
-Milton - Database, Task Cards, and testing
-Miriam - Login/registration and testing
+Jonathan - Supply, shop, and calendar screens      
+Milton - Database, Task Cards, and testing         
+Miriam - Login/registration and testing           
 
 ## Known Bugs and Limitations
 We do not have a working password recovery option.       
