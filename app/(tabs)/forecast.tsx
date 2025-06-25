@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -12,14 +12,21 @@ import {
   isBefore,
   parseISO,
 } from 'date-fns';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { useTasks } from '@/hooks/useTasks';
 import { styles as sharedStyles } from '@/styles/styles';
 
 export default function ForecastScreen() {
-  const { tasks, loading, error } = useTasks();
+  const { tasks, loading, error, refetch } = useTasks();
   const [filterNext7Days, setFilterNext7Days] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch(); // Refetch tasks when screen is focused
+    }, [refetch]),
+  );
 
   const repeatingTasks = tasks.filter(task => task.repeatIn);
 
