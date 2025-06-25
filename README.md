@@ -14,5 +14,5 @@ To test, run `npm test` in the project directory.
 - User login allows data to be stored digitally and accessed from multiple devices. 
 
 ## Known Bugs and Limitations
-We do not have a working password recovery option. 
+We do not have a working password recovery option.       
 While email verification works, the link to verify doesn't lead anywhere. Despite this, clicking the link will verify the email.
