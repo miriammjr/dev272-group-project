@@ -2,6 +2,9 @@
 
 #### Jonathan Mutombo, Miriam Rundell, Milton Vuong
 
+## Presentation Slides 
+[Click here to access the presentation slides](https://docs.google.com/presentation/d/1CIVJrPbulb2EUjOf5Z6Df21DaXqM-YYUPZdsZhTquFw/edit?slide=id.g33d394b539d_0_35#slide=id.g33d394b539d_0_35)
+
 ## Setup and Run Instructions
 After cloning the repository, run `npm i` in the project directory to install all packages, then `npx expo start` to run. 
 
