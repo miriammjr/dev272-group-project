@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -11,19 +11,43 @@ import {
   formatDistanceToNowStrict,
   isBefore,
   parseISO,
+  compareAsc,
 } from 'date-fns';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { useTasks } from '@/hooks/useTasks';
 import { styles as sharedStyles } from '@/styles/styles';
 
 export default function ForecastScreen() {
-  const { tasks, loading, error } = useTasks();
+  const { tasks, loading, error, refetch } = useTasks();
   const [filterNext7Days, setFilterNext7Days] = useState(true);
 
-  const repeatingTasks = tasks.filter(task => task.repeatIn);
+  useFocusEffect(
+    useCallback(() => {
+      refetch(); // Refetch tasks when screen is focused
+    }, [refetch]),
+  );
 
-  const filteredTasks = repeatingTasks.filter(task => {
+  // Step 1: Filter to only repeating and uncompleted tasks
+  const uncompletedRepeatingTasks = tasks.filter(
+    task => task.repeatIn && !task.completed,
+  );
+
+  // Step 2: Group by taskName and keep only the soonest due task
+  const latestTasksMap = new Map();
+
+  uncompletedRepeatingTasks.forEach(task => {
+    const existing = latestTasksMap.get(task.taskName);
+    const dueDate = parseISO(task.dueDate);
+
+    if (!existing || compareAsc(dueDate, parseISO(existing.dueDate)) < 0) {
+      latestTasksMap.set(task.taskName, task);
+    }
+  });
+
+  // Step 3: Convert to array and apply 7-day filter if needed
+  const filteredTasks = Array.from(latestTasksMap.values()).filter(task => {
     if (!filterNext7Days) return true;
     const dueDate = parseISO(task.dueDate);
     return isBefore(dueDate, addDays(new Date(), 7));

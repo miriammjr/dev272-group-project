@@ -9,7 +9,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { styles as sharedStyles } from '@/styles/styles';
 
 export default function CalendarScreen() {
-  const { tasks, loading, error } = useTasks();
+  const { tasks, loading, error, refetch } = useTasks();
   const [selectedDate, setSelectedDate] = useState(() =>
     new Date().toLocaleDateString('en-CA'),
   );
@@ -19,19 +19,24 @@ export default function CalendarScreen() {
     React.useCallback(() => {
       const today = new Date().toLocaleDateString('en-CA');
       setSelectedDate(today);
-    }, []),
+      refetch(); // Refetch tasks when screen is focused
+    }, [refetch]),
   );
 
   useEffect(() => {
     if (!selectedDate || !tasks.length) return;
 
-    const tasksForDay = tasks.filter(task => {
-      if (!task.dueDate) return false;
-      const taskDate = new Date(task.dueDate).toLocaleDateString('en-CA');
-      return taskDate === selectedDate;
-    });
+    const tasksForDay = tasks
+      .filter(task => {
+        if (!task.dueDate || task.completed) return false;
+        const taskDate = new Date(task.dueDate).toLocaleDateString('en-CA');
+        return taskDate === selectedDate;
+      })
+      .sort(
+        (a, b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime(),
+      );
 
-    setTasksOnDay(tasksForDay);
+    setTasksOnDay(tasksForDay.slice(0, 1)); // Only the latest uncompleted task
   }, [selectedDate, tasks]);
 
   const markedDates = useMemo(() => {
@@ -80,7 +85,7 @@ export default function CalendarScreen() {
             : 'Select a date to see tasks.'}
         </ThemedText>
 
-        {loading && <Text>Loading...</Text>}
+        {loading && <Text>Loading tasks...</Text>}
         {error && <Text style={{ color: 'red' }}>{error}</Text>}
 
         <FlatList
