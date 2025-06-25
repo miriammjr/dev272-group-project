@@ -31,7 +31,7 @@ export default function ForecastScreen() {
 
   // Step 1: Filter to only repeating and uncompleted tasks
   const uncompletedRepeatingTasks = tasks.filter(
-    task => task.repeatIn && !task.completed
+    task => task.repeatIn && !task.completed,
   );
 
   // Step 2: Group by taskName and keep only the soonest due task
@@ -79,12 +79,12 @@ export default function ForecastScreen() {
       <View style={sharedStyles.section}>
         {loading && (
           <ActivityIndicator
-            size="large"
-            color="#3B82F6"
+            size='large'
+            color='#3B82F6'
             style={sharedStyles.loader}
           />
         )}
-        {error && <ThemedText type="error">{error}</ThemedText>}
+        {error && <ThemedText type='error'>{error}</ThemedText>}
 
         {!loading && filteredTasks.length === 0 && (
           <View style={sharedStyles.emptyState}>

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">89.65% </span>
+                <span class="strong">90.32% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>26/29</span>
+                <span class='fraction'>28/31</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">54.54% </span>
+                <span class="strong">58.33% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>12/22</span>
+                <span class='fraction'>14/24</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90% </span>
+                <span class="strong">90.9% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>9/10</span>
+                <span class='fraction'>10/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">96.29% </span>
+                <span class="strong">96.55% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>26/27</span>
+                <span class='fraction'>28/29</span>
             </div>
         
             
@@ -166,7 +166,12 @@
 <a name='L101'></a><a href='#L101'>101</a>
 <a name='L102'></a><a href='#L102'>102</a>
 <a name='L103'></a><a href='#L103'>103</a>
-<a name='L104'></a><a href='#L104'>104</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -187,6 +192,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -194,9 +200,13 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -253,9 +263,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -280,7 +290,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { styles as sharedStyles } from '@/styles/styles';
 &nbsp;
 export default function CalendarScreen() {
-  const { tasks, loading, error } = useTasks();
+  const { tasks, loading, error, refetch } = useTasks();
   const [selectedDate, setSelectedDate] = useState(() =&gt;
     new Date().toLocaleDateString('en-CA'),
   );
@@ -290,19 +300,24 @@ export default function CalendarScreen() {
     React.useCallback(() =&gt; {
       const today = new Date().toLocaleDateString('en-CA');
       setSelectedDate(today);
-    }, []),
+      refetch(); // Refetch tasks when screen is focused
+    }, [refetch]),
   );
 &nbsp;
   useEffect(() =&gt; {
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!selectedDate || !tasks.length) <span class="cstat-no" title="statement not covered" >return;</span>
 &nbsp;
-    const tasksForDay = tasks.filter(task =&gt; {
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (!task.dueDate) <span class="cstat-no" title="statement not covered" >return false;</span>
-      const taskDate = new Date(task.dueDate).toLocaleDateString('en-CA');
-      return taskDate === selectedDate;
-    });
+    const tasksForDay = tasks
+      .filter(task =&gt; {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!task.dueDate || task.completed) <span class="cstat-no" title="statement not covered" >return false;</span>
+        const taskDate = new Date(task.dueDate).toLocaleDateString('en-CA');
+        return taskDate === selectedDate;
+      })
+      .sort(
+        (a, b) =&gt; new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime(),
+      );
 &nbsp;
-    setTasksOnDay(tasksForDay);
+    setTasksOnDay(tasksForDay.slice(0, 1)); // Only the latest uncompleted task
   }, [selectedDate, tasks]);
 &nbsp;
   const markedDates = useMemo(() =&gt; {
@@ -351,7 +366,7 @@ export default function CalendarScreen() {
             : <span class="branch-1 cbranch-no" title="branch not covered" >'Select a date to see tasks.'}</span>
         &lt;/ThemedText&gt;
 &nbsp;
-        {loading &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >&lt;Text&gt;Loading...&lt;/Text&gt;}</span>
+        {loading &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >&lt;Text&gt;Loading tasks...&lt;/Text&gt;}</span>
         {error &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >&lt;Text style={{ color: 'red' }}&gt;{error}&lt;/Text&gt;}</span>
 &nbsp;
         &lt;FlatList
@@ -379,7 +394,7 @@ export default function CalendarScreen() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-06-25T21:59:32.463Z
+                at 2025-06-25T22:18:37.058Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

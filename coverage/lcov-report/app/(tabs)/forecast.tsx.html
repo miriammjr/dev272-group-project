@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">86.66% </span>
+                <span class="strong">90.47% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>13/15</span>
+                <span class='fraction'>19/21</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">58.82% </span>
+                <span class="strong">60.86% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>10/17</span>
+                <span class='fraction'>14/23</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.33% </span>
+                <span class="strong">85.71% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>5/6</span>
+                <span class='fraction'>6/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.3% </span>
+                <span class="strong">95% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>12/13</span>
+                <span class='fraction'>19/20</span>
             </div>
         
             
@@ -169,7 +169,25 @@
 <a name='L104'></a><a href='#L104'>104</a>
 <a name='L105'></a><a href='#L105'>105</a>
 <a name='L106'></a><a href='#L106'>106</a>
-<a name='L107'></a><a href='#L107'>107</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -198,8 +216,24 @@
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">6x</span>
@@ -288,6 +322,7 @@ import {
   formatDistanceToNowStrict,
   isBefore,
   parseISO,
+  compareAsc,
 } from 'date-fns';
 import { useFocusEffect } from '@react-navigation/native';
 &nbsp;
@@ -305,9 +340,25 @@ export default function ForecastScreen() {
     }, [refetch]),
   );
 &nbsp;
-  const repeatingTasks = tasks.filter(task =&gt; task.repeatIn);
+  // Step 1: Filter to only repeating and uncompleted tasks
+  const uncompletedRepeatingTasks = tasks.filter(
+    task =&gt; task.repeatIn &amp;&amp; !task.completed,
+  );
 &nbsp;
-  const filteredTasks = repeatingTasks.filter(task =&gt; {
+  // Step 2: Group by taskName and keep only the soonest due task
+  const latestTasksMap = new Map();
+&nbsp;
+  uncompletedRepeatingTasks.forEach(task =&gt; {
+    const existing = latestTasksMap.get(task.taskName);
+    const dueDate = parseISO(task.dueDate);
+&nbsp;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!existing || <span class="branch-1 cbranch-no" title="branch not covered" >compareAsc(dueDate, parseISO(existing.dueDate)) &lt; 0)</span> {
+      latestTasksMap.set(task.taskName, task);
+    }
+  });
+&nbsp;
+  // Step 3: Convert to array and apply 7-day filter if needed
+  const filteredTasks = Array.from(latestTasksMap.values()).filter(task =&gt; {
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!filterNext7Days) <span class="cstat-no" title="statement not covered" >return true;</span>
     const dueDate = parseISO(task.dueDate);
     return isBefore(dueDate, addDays(new Date(), 7));
@@ -388,7 +439,7 @@ export default function ForecastScreen() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-06-25T21:59:32.463Z
+                at 2025-06-25T22:18:37.058Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

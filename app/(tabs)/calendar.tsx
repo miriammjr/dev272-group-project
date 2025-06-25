@@ -32,7 +32,9 @@ export default function CalendarScreen() {
         const taskDate = new Date(task.dueDate).toLocaleDateString('en-CA');
         return taskDate === selectedDate;
       })
-      .sort((a, b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
+      .sort(
+        (a, b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime(),
+      );
 
     setTasksOnDay(tasksForDay.slice(0, 1)); // Only the latest uncompleted task
   }, [selectedDate, tasks]);
@@ -77,7 +79,7 @@ export default function CalendarScreen() {
       </View>
 
       <View style={sharedStyles.section}>
-        <ThemedText type="subtitle" style={sharedStyles.sectionTitle}>
+        <ThemedText type='subtitle' style={sharedStyles.sectionTitle}>
           {selectedDate
             ? `📝 Tasks for ${selectedDate}`
             : 'Select a date to see tasks.'}
