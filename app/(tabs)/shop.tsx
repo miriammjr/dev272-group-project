@@ -6,7 +6,6 @@ import {
   Linking,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
