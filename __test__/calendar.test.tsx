@@ -1,15 +1,13 @@
-// ✅ Mock Supabase before anything else
-import Home from '@/app/(tabs)/home';
+import CalendarScreen from '@/app/(tabs)/calendar';
 import * as useTasksHook from '@/hooks/useTasks';
-import { render, waitFor } from '@testing-library/react-native';
-import React from 'react';
+import { NavigationContext } from '@react-navigation/native';
+import { render, screen } from '@testing-library/react-native';
 
 jest.mock('@/hooks/useTasks');
-
 jest.mock('../utils/supabase', () => ({
   supabase: {
     auth: {
-      getUser: jest.fn(),
+      getUser: jest.fn().mockReturnThis(),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
@@ -17,7 +15,6 @@ jest.mock('../utils/supabase', () => ({
     })),
   },
 }));
-
 const mockTasks = [
   {
     id: 1,
@@ -33,7 +30,11 @@ const mockTasks = [
   },
 ];
 
-describe('Home Screen', () => {
+describe('<CalendarScreen />', () => {
+  const navContext = {
+    isFocused: () => true,
+    addListener: jest.fn(() => jest.fn()),
+  };
   beforeEach(() => {
     (useTasksHook.useTasks as jest.Mock).mockReturnValue({
       tasks: mockTasks,
@@ -42,13 +43,17 @@ describe('Home Screen', () => {
       refetch: jest.fn(),
     });
   });
+  test('loads date', async () => {
+    render(
+      <NavigationContext.Provider value={navContext}>
+        <CalendarScreen />
+      </NavigationContext.Provider>,
+    );
 
-  it('renders a list of tasks', async () => {
-    const { getByText } = render(<Home />);
-
-    await waitFor(() => {
-      expect(getByText('Test Task 1')).toBeTruthy();
-      expect(getByText('Test Task 2')).toBeTruthy();
-    });
+    expect(
+      screen.getByText(
+        '📝 Tasks for ' + new Date().toLocaleDateString('en-CA'),
+      ),
+    ).toBeOnTheScreen();
   });
 });

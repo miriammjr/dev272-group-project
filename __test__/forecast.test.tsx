@@ -1,15 +1,11 @@
-// ✅ Mock Supabase before anything else
-import Home from '@/app/(tabs)/home';
+import ForecastScreen from '@/app/(tabs)/forecast';
 import * as useTasksHook from '@/hooks/useTasks';
-import { render, waitFor } from '@testing-library/react-native';
-import React from 'react';
-
+import { render, screen } from '@testing-library/react-native';
 jest.mock('@/hooks/useTasks');
-
 jest.mock('../utils/supabase', () => ({
   supabase: {
     auth: {
-      getUser: jest.fn(),
+      getUser: jest.fn().mockReturnThis(),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
@@ -17,7 +13,6 @@ jest.mock('../utils/supabase', () => ({
     })),
   },
 }));
-
 const mockTasks = [
   {
     id: 1,
@@ -33,7 +28,7 @@ const mockTasks = [
   },
 ];
 
-describe('Home Screen', () => {
+describe('<ForecastScreen />', () => {
   beforeEach(() => {
     (useTasksHook.useTasks as jest.Mock).mockReturnValue({
       tasks: mockTasks,
@@ -42,13 +37,8 @@ describe('Home Screen', () => {
       refetch: jest.fn(),
     });
   });
-
-  it('renders a list of tasks', async () => {
-    const { getByText } = render(<Home />);
-
-    await waitFor(() => {
-      expect(getByText('Test Task 1')).toBeTruthy();
-      expect(getByText('Test Task 2')).toBeTruthy();
-    });
+  test('shows next 7 days', () => {
+    render(<ForecastScreen />);
+    expect(screen.getByText('Showing: Next 7 Days')).toBeOnTheScreen();
   });
 });
