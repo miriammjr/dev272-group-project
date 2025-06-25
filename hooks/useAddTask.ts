@@ -1,12 +1,21 @@
 import { useState } from 'react';
 import { supabase } from '../utils/supabase';
 
-export function useAddTask() {
+interface TaskData {
+  taskName: string;
+  dueDate: string;
+  completed?: boolean;
+  shouldRepeat?: boolean;
+  repeatIn?: number;
+  type?: string;
+}
+
+export function useAddTask(refetch?: () => Promise<any>) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [newTask, setNewTask] = useState<any>(null);
 
-  const addTask = async (taskData: { title: string; completed?: boolean }) => {
+  const addTask = async (taskData: TaskData) => {
     setLoading(true);
     setError(null);
 
@@ -26,7 +35,7 @@ export function useAddTask() {
       .insert([
         {
           ...taskData,
-          idUserAccount: user.id, // Attach user ID here
+          idUserAccount: user.id,
         },
       ])
       .select()
@@ -37,6 +46,9 @@ export function useAddTask() {
       setNewTask(null);
     } else {
       setNewTask(data);
+      if (refetch) {
+        await refetch();
+      }
     }
 
     setLoading(false);

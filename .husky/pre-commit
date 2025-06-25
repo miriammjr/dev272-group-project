@@ -3,3 +3,6 @@ npx prettier --write .
 
 # Lint and fix issues with ESLint
 npx eslint . --fix
+
+# Jest test and coverage
+npx jest --coverage

@@ -21,7 +21,6 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  // --- AUTHENTICATION FUNCTIONS ---
   async function signInWithEmail() {
     if (!email || !password) {
       Alert.alert('Please enter both email and password.');
@@ -126,6 +125,9 @@ export default function Auth() {
               name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
               size={22}
               color='#6B7280'
+              accessibilityHint={
+                isPasswordVisible ? 'Password Visible' : 'Password Hidden'
+              }
             />
           </Pressable>
         </View>
@@ -164,11 +166,10 @@ export default function Auth() {
   );
 }
 
-// --- STYLESHEET ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#111827', // Dark blue-gray background
+    backgroundColor: '#111827',
     justifyContent: 'center',
     paddingHorizontal: 24,
   },
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   button: {
-    backgroundColor: '#3B82F6', // Primary blue color
+    backgroundColor: '#3B82F6',
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',

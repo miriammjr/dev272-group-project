@@ -1,32 +1,50 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { FlatList, Platform, ScrollView, Text, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
+import { useFocusEffect } from '@react-navigation/native';
+
 import TaskCard from '@/components/TaskCard';
 import { useTasks } from '@/hooks/useTasks';
+import { ThemedText } from '@/components/ThemedText';
+import { styles as sharedStyles } from '@/styles/styles';
 
 export default function CalendarScreen() {
-  const { tasks, loading, error } = useTasks();
-  const [selectedDate, setSelectedDate] = useState('');
+  const { tasks, loading, error, refetch } = useTasks();
+  const [selectedDate, setSelectedDate] = useState(() =>
+    new Date().toLocaleDateString('en-CA'),
+  );
   const [tasksOnDay, setTasksOnDay] = useState([]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const today = new Date().toLocaleDateString('en-CA');
+      setSelectedDate(today);
+      refetch(); // Refetch tasks when screen is focused
+    }, [refetch]),
+  );
 
   useEffect(() => {
     if (!selectedDate || !tasks.length) return;
 
-    const tasksForDay = tasks.filter(task => {
-      if (!task.dueDate) return false;
-      const taskDate = new Date(task.dueDate).toISOString().slice(0, 10);
-      return taskDate === selectedDate;
-    });
+    const tasksForDay = tasks
+      .filter(task => {
+        if (!task.dueDate || task.completed) return false;
+        const taskDate = new Date(task.dueDate).toLocaleDateString('en-CA');
+        return taskDate === selectedDate;
+      })
+      .sort(
+        (a, b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime(),
+      );
 
-    setTasksOnDay(tasksForDay);
+    setTasksOnDay(tasksForDay.slice(0, 1)); // Only the latest uncompleted task
   }, [selectedDate, tasks]);
 
-  const getMarkedDates = () => {
+  const markedDates = useMemo(() => {
     const datesWithTasks: Record<string, any> = {};
 
     tasks.forEach(task => {
       if (task.dueDate) {
-        const dateStr = new Date(task.dueDate).toISOString().slice(0, 10);
+        const dateStr = new Date(task.dueDate).toLocaleDateString('en-CA');
         datesWithTasks[dateStr] = {
           marked: true,
           dotColor: '#FF9800',
@@ -43,45 +61,48 @@ export default function CalendarScreen() {
     }
 
     return datesWithTasks;
-  };
+  }, [tasks, selectedDate]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>📆 Calendar</Text>
-      <Calendar
-        onDayPress={day => setSelectedDate(day.dateString)}
-        markedDates={getMarkedDates()}
-      />
+    <ScrollView
+      style={Platform.OS === 'web' ? sharedStyles.scrollContainer : undefined}
+      contentContainerStyle={
+        Platform.OS === 'web' ? sharedStyles.scrollContent : undefined
+      }
+    >
+      <View style={sharedStyles.section}>
+        <Calendar
+          onDayPress={day => setSelectedDate(day.dateString)}
+          markedDates={markedDates}
+          style={sharedStyles.calendar}
+        />
+      </View>
 
-      <Text style={styles.sectionTitle}>
-        {selectedDate
-          ? `📝 Tasks for ${selectedDate}`
-          : 'Select a date to see tasks.'}
-      </Text>
+      <View style={sharedStyles.section}>
+        <ThemedText type='subtitle' style={sharedStyles.sectionTitle}>
+          {selectedDate
+            ? `📝 Tasks for ${selectedDate}`
+            : 'Select a date to see tasks.'}
+        </ThemedText>
 
-      {loading && <Text>Loading...</Text>}
-      {error && <Text style={{ color: 'red' }}>{error}</Text>}
+        {loading && <Text>Loading tasks...</Text>}
+        {error && <Text style={{ color: 'red' }}>{error}</Text>}
 
-      <FlatList
-        data={tasksOnDay}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <TaskCard
-            taskName={item.taskName}
-            dueDate={item.dueDate}
-            repeatIn={item.repeatIn}
-          />
-        )}
-        ListEmptyComponent={
-          <Text style={{ margin: 16 }}>No tasks for this day 🎉</Text>
-        }
-      />
-    </View>
+        <FlatList
+          data={tasksOnDay}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({ item }) => (
+            <TaskCard
+              taskName={item.taskName}
+              dueDate={item.dueDate}
+              repeatIn={item.repeatIn}
+            />
+          )}
+          ListEmptyComponent={
+            <Text style={sharedStyles.emptyText}>No tasks for this day 🎉</Text>
+          }
+        />
+      </View>
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F5F5', padding: 12 },
-  title: { fontSize: 24, fontWeight: 'bold', marginVertical: 12 },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginTop: 24 },
-});
